@@ -253,6 +253,12 @@ var WEBINAR_DATE = (function () {
   var add = (6 - d.getUTCDay() + 7) % 7;
   if (add === 0 && nowIst.getUTCHours() >= 19) add = 7; // after 7 PM Saturday, move to next week
   d = new Date(d.getTime() + add * 86400000);
+  // Internal demo run: ?demo=YYYY-MM-DD (a Saturday within the next 14 days) books that date instead
+  var demo = new URLSearchParams(location.search).get("demo");
+  if (demo && /^\d{4}-\d{2}-\d{2}$/.test(demo)) {
+    var dd = new Date(demo + "T00:00:00Z"), today = new Date(Date.UTC(nowIst.getUTCFullYear(), nowIst.getUTCMonth(), nowIst.getUTCDate()));
+    if (dd.getUTCDay() === 6 && dd >= today && dd - today <= 14 * 86400000) return demo;
+  }
   if (d < first) d = first;
   return d.toISOString().slice(0, 10);
 })();

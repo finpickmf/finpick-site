@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="mr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FinPick Live · एक प्रश्न</title><meta name="robots" content="noindex">
+<link rel="icon" href="https://finpick.in/assets/favicona.png">
+<style>
+:root{--bg:#14213D;--card:#1F2E52;--ink:#F4EFE6;--muted:#C9D6E8;--orange:#E8742A;--ok:#5CC48A;--line:#33456E}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:Mukta,'Noto Sans Devanagari',Arial,sans-serif;font-size:18px;line-height:1.5;
+  padding:24px max(16px,env(safe-area-inset-right,0px)) 32px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:center}
+main{width:100%;max-width:480px;display:flex;flex-direction:column;gap:16px}
+.logo{font-weight:700;font-size:22px}.logo .f{color:#F7931E}.logo .p{color:#6FA8F0}.logo small{color:var(--muted);font-weight:400;font-size:14px;margin-left:8px}
+h1{font-size:24px;line-height:1.3;margin:0;font-weight:700}
+p{margin:0}.muted{color:var(--muted);font-size:15px}
+.opts{display:flex;flex-direction:column;gap:10px}
+button.opt{font:inherit;font-size:19px;font-weight:600;text-align:left;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer}
+button.opt:active,button.opt:focus-visible{border-color:var(--orange);outline:none}
+button.opt[disabled]{opacity:.6}
+.mob{display:flex;flex-direction:column;gap:8px}
+input{font:inherit;font-size:19px;padding:12px;border-radius:10px;border:2px solid var(--line);background:#0E1830;color:var(--ink)}
+.done{background:var(--card);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.done b{color:var(--ok)}
+a{color:#F2A365}
+.err{color:#FF8A80;font-size:15px}
+footer{font-size:12px;color:var(--muted);margin-top:8px}
+[hidden]{display:none!important}
+</style></head>
+<body><main>
+<div class="logo"><span class="f">Fin</span><span class="p">Pick</span><small>Saturday Live</small></div>
+<h1 id="q">…</h1>
+<p class="muted" id="hint">एक पर्याय दाबा. 10 सेकंद लागतील.</p>
+<div class="mob" id="mobBox" hidden>
+  <label for="mob">तुमचा WhatsApp नंबर (एकदाच विचारू)</label>
+  <input id="mob" type="tel" inputmode="numeric" maxlength="10" placeholder="10 अंकी mobile" autocomplete="tel-national">
+</div>
+<div class="opts" id="opts"></div>
+<p class="err" id="err" role="alert"></p>
+<div class="done" id="done" hidden>
+  <p><b>धन्यवाद<span id="nm"></span>!</b> तुमचं उत्तर नोंदवलं.</p>
+  <p id="next">आता Meet मध्ये परत जा. Live सुरू आहे.</p>
+</div>
+<footer>हे फक्त तुमची आवड समजण्यासाठी आहे; कोणतीही खरेदी आवश्यक नाही. FinPick · AMFI-registered MFD, ARN-121216. Mutual fund investments are subject to market risks, read all scheme related documents carefully.</footer>
+</main>
+<script>
+(function(){
+  var API="https://project-rainfall-60087439549.development.catalystserverless.in/server/lp_lead/";
+  var POLLS={
+    "1":{q:"आजच्या Live नंतर तुम्हाला सगळ्यात जास्त काय उपयोगी पडेल?",o:[["Health policy review","माझी सध्याची health policy तपासून हवी"],["Health insurance quote","नव्या health insurance चा quote हवा"],["Term insurance quote","Term insurance चा quote हवा"],["Not now","आत्ता फक्त माहिती ऐकतोय"]]},
+    "2":{q:"तुमचं पुढचं आर्थिक ध्येय कोणतं?",o:[["SIP / Mutual funds","SIP सुरू करायची / वाढवायची आहे"],["Financial plan","कुटुंबाचा पूर्ण financial plan हवा"],["Retirement planning","Retirement ची तयारी"],["Child education","मुलांचं शिक्षण"]]},
+    "3":{q:"FinPick च्या तज्ज्ञाशी 15 मिनिटं बोलायचं आहे का?",o:[["Expert call","हो, मला call करा"],["Info on WhatsApp","आधी WhatsApp वर माहिती पाठवा"],["Not now","आत्ता नको"]]}
+  };
+  var m=location.pathname.match(/\/live\/(\d)\/?/); var id=(m&&m[1])||new URLSearchParams(location.search).get("p")||"1";
+  var P=POLLS[id]||POLLS["1"];
+  var el=function(x){return document.getElementById(x)};
+  el("q").textContent=P.q;
+  var lead=null, mob="";
+  try{lead=localStorage.getItem("fp_lead");mob=localStorage.getItem("fp_mob")||""}catch(e){}
+  var qp=new URLSearchParams(location.search).get("l"); if(qp&&/^\d{10,25}$/.test(qp)) lead=qp;
+  if(!lead&&!mob) el("mobBox").hidden=false;
+  el("mob").addEventListener("input",function(){this.value=this.value.replace(/\D/g,"").slice(0,10)});
+  P.o.forEach(function(op){
+    var b=document.createElement("button"); b.className="opt"; b.type="button"; b.textContent=op[1];
+    b.addEventListener("click",function(){send(op[0])}); el("opts").appendChild(b);
+  });
+  function send(val){
+    el("err").textContent="";
+    if(!lead){ var v=el("mob").value||mob; if(!/^[6-9]\d{9}$/.test(v)){el("err").textContent="आधी तुमचा 10 अंकी WhatsApp नंबर लिहा.";el("mob").focus();return} mob=v; try{localStorage.setItem("fp_mob",v)}catch(e){} }
+    [].forEach.call(document.querySelectorAll("button.opt"),function(b){b.disabled=true});
+    var url=API+"?poll="+id+"&a="+encodeURIComponent(val)+(lead?"&lead="+lead:"&m="+mob);
+    fetch(url,{method:"POST",headers:{"Content-Type":"text/plain"},body:"{}"}).then(function(r){return r.json()}).then(function(j){
+      if(j&&j.ok){ if(j.lead){try{localStorage.setItem("fp_lead",j.lead)}catch(e){}} done(val,j.first) }
+      else { [].forEach.call(document.querySelectorAll("button.opt"),function(b){b.disabled=false}); el("err").textContent="उत्तर नोंदवता आलं नाही. पुन्हा दाबा." }
+    }).catch(function(){ done(val,"") });
+  }
+  function done(val,first){
+    el("opts").hidden=true; el("mobBox").hidden=true; el("hint").hidden=true; el("done").hidden=false;
+    if(first) el("nm").textContent=", "+first;
+    if(val==="Expert call") el("next").innerHTML="आमची टीम 24 तासांत call करेल. आता Meet मध्ये परत जा.";
+    if(id==="3") el("next").innerHTML+=' तुमचा FinPick Blueprint हवा असेल तर <a href="https://blueprint.finpickdigital.com/request?src=sl-live">इथे माहिती भरा</a>.';
+  }
+})();
+</script>
+</body></html>

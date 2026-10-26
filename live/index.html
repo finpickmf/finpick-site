@@ -14,6 +14,7 @@
   // Attendance: emails link here as /live/?l=<Zoho lead id>; Zoho marks "Webinar Attended" on webinar day
   var id=new URLSearchParams(location.search).get("l");
   if(id && /^\d{10,25}$/.test(id)){
+    try{localStorage.setItem("fp_lead",id)}catch(e){}
     try{
       fetch("https://project-rainfall-60087439549.development.catalystserverless.in/server/lp_lead/?att="+id,
         {method:"POST",headers:{"Content-Type":"text/plain"},body:"{}",keepalive:true}).catch(function(){}).then(function(){setTimeout(go,150)});

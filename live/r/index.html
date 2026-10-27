@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="mr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FinPick Saturday Live · जागा राखली</title><meta name="robots" content="noindex">
+<link rel="icon" href="https://finpick.in/assets/favicona.png">
+<style>
+:root{--bg:#14213D;--card:#1F2E52;--ink:#F4EFE6;--muted:#C9D6E8;--orange:#E8742A;--ok:#5CC48A;--line:#33456E}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:Mukta,'Noto Sans Devanagari',Arial,sans-serif;font-size:18px;line-height:1.5;
+  padding:24px max(16px,env(safe-area-inset-right,0px)) 32px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:center}
+main{width:100%;max-width:480px;display:flex;flex-direction:column;gap:16px}
+.logo{font-weight:700;font-size:22px}.logo .f{color:#F7931E}.logo .p{color:#6FA8F0}.logo small{color:var(--muted);font-weight:400;font-size:14px;margin-left:8px}
+h1{font-size:26px;line-height:1.3;margin:0;font-weight:700}
+p{margin:0}.muted{color:var(--muted);font-size:15px}
+.card{background:var(--card);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.when{font-size:22px;font-weight:700;color:var(--orange)}
+.ok{color:var(--ok);font-weight:700}
+a.btn{display:block;text-align:center;font-weight:700;font-size:19px;color:#1A1206;background:var(--orange);border-radius:10px;padding:14px;text-decoration:none}
+ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+footer{font-size:12px;color:var(--muted);margin-top:8px}
+[hidden]{display:none!important}
+</style></head>
+<body><main>
+<div class="logo"><span class="f">Fin</span><span class="p">Pick</span><small>Saturday Live</small></div>
+
+<section id="wait" class="card"><p>तुमची जागा राखत आहोत…</p></section>
+
+<section id="ok" hidden>
+  <h1><span class="ok">✓</span> <span id="nm">तुमची</span> जागा राखली!</h1>
+  <div class="card">
+    <p class="muted">FinPick Saturday Live · मोफत · मराठीत</p>
+    <p class="when" id="when">शनिवार, संध्या. 6 वा.</p>
+    <p>Google Meet वर. Join link तुम्हाला WhatsApp आणि email वर येईल, आणि Live च्या दिवशी 3 वा. आणि 5 वा. आठवण येईल.</p>
+  </div>
+  <div class="card">
+    <p><b>Live मध्ये काय?</b></p>
+    <ul>
+      <li>तुमच्या health policy मधल्या कोणत्या ओळी तपासायच्या</li>
+      <li>office cover, आई-बाबांचा cover आणि claim वेळी होणाऱ्या चुका</li>
+      <li>उपस्थित सर्वांना Health Policy Check Sheet (PDF)</li>
+    </ul>
+    <p class="muted">तुमची policy हातात घेऊन या. Live मध्ये काहीही विकलं जात नाही.</p>
+  </div>
+</section>
+
+<section id="bad" hidden>
+  <h1>Link उघडता आली नाही</h1>
+  <div class="card">
+    <p id="badmsg">ही link जुनी किंवा अपूर्ण आहे. खालील बटण दाबून 30 सेकंदात नोंदणी करा.</p>
+    <a class="btn" href="https://insure.finpick.in/webinar/?utm_source=whatsapp&amp;utm_medium=customer_invite&amp;utm_campaign=saturday_live">नोंदणी करा</a>
+  </div>
+</section>
+
+<footer>शैक्षणिक सत्र; कोणत्याही policy ची शिफारस नाही. FinPick · AMFI-registered MFD, ARN-121216. Insurance through SIBL, IRDAI Lic. DB 947/2022/830.</footer>
+</main>
+<script>
+(function(){
+  var API="https://project-rainfall-60087439549.development.catalystserverless.in/server/lp_lead/";
+  var el=function(x){return document.getElementById(x)};
+  var k=new URLSearchParams(location.search).get("k")||"";
+  function bad(msg){el("wait").hidden=true;el("bad").hidden=false;if(msg)el("badmsg").textContent=msg}
+  if(!/^\d{10,25}\.[a-f0-9]{8,64}$/.test(k)){bad();return}
+  var MR=["जानेवारी","फेब्रुवारी","मार्च","एप्रिल","मे","जून","जुलै","ऑगस्ट","सप्टेंबर","ऑक्टोबर","नोव्हेंबर","डिसेंबर"];
+  fetch(API+"?rsvp=1",{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({k:k}),keepalive:true})
+    .then(function(r){return r.json()})
+    .then(function(j){
+      if(!j||!j.ok){bad(j&&j.reason==="expired"?"ही link आता चालू नाही. खालील बटण दाबून नोंदणी करा.":null);return}
+      if(j.lead){try{localStorage.setItem("fp_lead",String(j.lead))}catch(e){}}
+      if(j.first) el("nm").textContent=j.first+", तुमची";
+      if(j.date&&/^\d{4}-\d{2}-\d{2}$/.test(j.date)){var p=j.date.split("-");el("when").textContent="शनिवार, "+Number(p[2])+" "+MR[Number(p[1])-1]+", संध्या. 6 वा."}
+      el("wait").hidden=true;el("ok").hidden=false;
+    })
+    .catch(function(){bad("Internet अडचण आली. थोड्या वेळाने पुन्हा link दाबा, किंवा खालील बटणाने नोंदणी करा.")});
+})();
+</script>
+</body></html>

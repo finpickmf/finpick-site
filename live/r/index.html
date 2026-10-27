@@ -60,7 +60,7 @@ footer{font-size:12px;color:var(--muted);margin-top:8px}
   function bad(msg){el("wait").hidden=true;el("bad").hidden=false;if(msg)el("badmsg").textContent=msg}
   if(!/^\d{10,25}_[a-f0-9]{8,64}$/.test(k)){bad();return}
   var MR=["जानेवारी","फेब्रुवारी","मार्च","एप्रिल","मे","जून","जुलै","ऑगस्ट","सप्टेंबर","ऑक्टोबर","नोव्हेंबर","डिसेंबर"];
-  fetch(API+"?rsvp=1",{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({k:k}),keepalive:true})
+  fetch(API+"?rsvp="+encodeURIComponent(k),{method:"POST",headers:{"Content-Type":"text/plain"},body:"{}"})
     .then(function(r){return r.json()})
     .then(function(j){
       if(!j||!j.ok){bad(j&&j.reason==="expired"?"ही link आता चालू नाही. खालील बटण दाबून नोंदणी करा.":null);return}

@@ -252,6 +252,7 @@ details.more[open] summary { margin-bottom: 10px; }
 <script>
 var ZOHO_ENDPOINT = "https://project-rainfall-60087439549.development.catalystserverless.in/server/lp_lead/";
 var META_PIXEL_ID = "1563224404938518";
+var META_PIXEL_ID_2 = "1565562343935028";   // ad account 779169349379154 ("Health Insurance" dataset) - used for registration optimisation
 var FIRST_WEBINAR = "2026-11-21"; // first session; afterwards every Saturday 6-7 PM IST
 var WEBINAR_DATE = (function () {
   var IST = 5.5 * 3600 * 1000, nowIst = new Date(Date.now() + IST);
@@ -278,7 +279,7 @@ var WA_NUMBER     = "918265083354";
 (function () {
   if (META_PIXEL_ID) {
     !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    try { fbq('init', META_PIXEL_ID); fbq('track', 'PageView'); } catch (e) {}
+    try { fbq('init', META_PIXEL_ID); if (META_PIXEL_ID_2) fbq('init', META_PIXEL_ID_2); fbq('track', 'PageView'); } catch (e) {}
   }
   var params = new URLSearchParams(location.search);
   function utm(k) { return params.get(k) || ""; }

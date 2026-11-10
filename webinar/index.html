@@ -8,7 +8,7 @@
 <link rel="icon" href="https://finpick.in/assets/favicona.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;600;700&family=Tiro+Devanagari+Marathi&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;600;700&family=Tiro+Devanagari+Marathi&display=swap" media="print" onload="this.media='all'">
 <style>
 :root {
   --bg: #FBF8F3;
@@ -101,6 +101,15 @@ footer { border-top: 1px solid var(--line); }
 footer .wrap { padding-block: 28px 40px; font-size: 13px; color: var(--muted); display: grid; gap: 6px; }
 @media (max-width: 860px) { .hero .wrap { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-block: 32px 40px; } .points { grid-template-columns: minmax(0, 1fr); } .host { grid-template-columns: minmax(0, 1fr); gap: 16px; } }
 @media (max-width: 420px) { .row2 { grid-template-columns: minmax(0, 1fr); } .card { padding: 22px 18px; } }
+details.more { margin: 4px 0 14px; border: 1px dashed var(--line); border-radius: 10px; padding: 10px 14px; }
+details.more summary { cursor: pointer; font-size: 15px; color: var(--muted); }
+details.more[open] summary { margin-bottom: 10px; }
+.stickycta { display: none; }
+@media (max-width: 860px) {
+  .stickycta { display: block; position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 50; text-align: center; background: var(--orange); color: #1A1206; font-weight: 700; font-size: 18px; padding: 14px 16px; border-radius: 12px; text-decoration: none; box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+  body { padding-bottom: 84px; }
+  body.cta-off .stickycta { display: none; }
+}
 </style>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1563224404938518&ev=PageView&noscript=1"></noscript>
 </head>
@@ -137,7 +146,7 @@ footer .wrap { padding-block: 28px 40px; font-size: 13px; color: var(--muted); d
       <div class="card" id="register">
         <div id="formView">
           <h2>मोफत जागा राखून ठेवा</h2>
-          <p class="lead">Join link तुम्हाला email आणि WhatsApp वर मिळेल.</p>
+          <p class="lead">फक्त नाव आणि WhatsApp नंबर. 20 सेकंद लागतील.</p>
           <form id="regForm" novalidate>
             <div class="field">
               <label for="name">तुमचं नाव <span class="en">Name</span></label>
@@ -145,57 +154,54 @@ footer .wrap { padding-block: 28px 40px; font-size: 13px; color: var(--muted); d
               <p class="err" id="nameErr" role="alert"></p>
             </div>
             <div class="field">
-              <label for="email">Email <span class="en">join link आणि reminders साठी</span></label>
-              <input type="email" id="email" name="email" autocomplete="email" inputmode="email" placeholder="tumche.nav@gmail.com" required>
-              <p class="err" id="emailErr" role="alert"></p>
+              <label for="mobile">WhatsApp नंबर <span class="en">Join link इथे येईल</span></label>
+              <input type="tel" id="mobile" name="mobile" inputmode="numeric" autocomplete="tel-national" maxlength="10" placeholder="10 अंकी" required>
+              <p class="err" id="mobileErr" role="alert"></p>
             </div>
-            <div class="row2">
-              <div class="field">
-                <label for="mobile">WhatsApp नंबर <span class="en">Mobile</span></label>
-                <input type="tel" id="mobile" name="mobile" inputmode="numeric" autocomplete="tel-national" maxlength="10" placeholder="10 अंकी" required>
-                <p class="err" id="mobileErr" role="alert"></p>
-              </div>
-              <div class="field">
-                <label for="pincode">Pin code</label>
-                <input type="text" id="pincode" name="pincode" inputmode="numeric" maxlength="6" placeholder="411045" required>
-                <p class="err" id="pinErr" role="alert"></p>
-              </div>
+            <div class="field">
+              <label for="cover">सध्याचा health cover <span class="en">Current cover</span></label>
+              <select id="cover" name="cover" required>
+                <option value="">निवडा</option>
+                <option value="None">काहीच नाही</option>
+                <option value="Office only">फक्त office चा</option>
+                <option value="Own below 5L">स्वतःचा, ₹5 लाखांपेक्षा कमी</option>
+                <option value="Own 5L plus">स्वतःचा, ₹5 लाख किंवा जास्त</option>
+              </select>
+              <p class="err" id="selErr" role="alert"></p>
             </div>
-            <div class="row2">
+            <details class="more">
+              <summary>Email आणि इतर माहिती <span class="en">(optional)</span></summary>
               <div class="field">
-                <label for="family">कुटुंबात किती जण? <span class="en">Family size</span></label>
-                <select id="family" name="family" required>
-                  <option value="">निवडा</option>
-                  <option value="फक्त मी (Individual)">फक्त मी</option>
-                  <option value="2 members (Couple)">2 जण</option>
-                  <option value="3-4 members (Family)">3-4 जण</option>
-                  <option value="5+ members">5 किंवा जास्त (आई-वडिलांसह)</option>
-                </select>
+                <label for="email">Email <span class="en">reminders साठी</span></label>
+                <input type="email" id="email" name="email" autocomplete="email" inputmode="email" placeholder="tumche.nav@gmail.com">
+                <p class="err" id="emailErr" role="alert"></p>
               </div>
-              <div class="field">
-                <label for="cover">सध्याचा health cover <span class="en">Current cover</span></label>
-                <select id="cover" name="cover" required>
-                  <option value="">निवडा</option>
-                  <option value="None">काहीच नाही</option>
-                  <option value="Office only">फक्त office चा</option>
-                  <option value="Own below 5L">स्वतःचा, ₹5 लाखांपेक्षा कमी</option>
-                  <option value="Own 5L plus">स्वतःचा, ₹5 लाख किंवा जास्त</option>
-                </select>
+              <div class="row2">
+                <div class="field">
+                  <label for="pincode">Pin code</label>
+                  <input type="text" id="pincode" name="pincode" inputmode="numeric" maxlength="6" placeholder="411045">
+                  <p class="err" id="pinErr" role="alert"></p>
+                </div>
+                <div class="field">
+                  <label for="family">कुटुंबात किती जण?</label>
+                  <select id="family" name="family">
+                    <option value="">निवडा</option>
+                    <option value="फक्त मी (Individual)">फक्त मी</option>
+                    <option value="2 members (Couple)">2 जण</option>
+                    <option value="3-4 members (Family)">3-4 जण</option>
+                    <option value="5+ members">5 किंवा जास्त (आई-वडिलांसह)</option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <p class="err" id="selErr" role="alert"></p>
-            <label class="consent" for="consent">
-              <input type="checkbox" id="consent" name="consent" required>
-              <span>Webinar ची माहिती आणि reminders साठी FinPick ने मला email, WhatsApp, SMS किंवा call करावा, यास माझी संमती आहे. मी कधीही STOP लिहून थांबवू शकतो/शकते.</span>
-            </label>
+            </details>
             <p class="err" id="consentErr" role="alert"></p>
-            <button class="primary" type="submit" id="submitBtn">माझी जागा राखून ठेवा</button>
-            <p class="fine">तुमची माहिती फक्त FinPick वापरेल. आम्ही ती कोणालाही विकत नाही.</p>
+            <button class="primary" type="submit" id="submitBtn">माझी मोफत जागा राखून ठेवा</button>
+            <p class="fine">बटण दाबून, webinar ची माहिती आणि reminders साठी FinPick ने मला WhatsApp, email, SMS किंवा call करावा, यास मी संमती देतो/देते. कधीही STOP लिहून थांबवता येईल. तुमची माहिती फक्त FinPick वापरेल, कोणालाही विकत नाही.</p>
           </form>
         </div>
         <div id="doneView" class="done" hidden>
           <h2>Registration झालं, <span id="doneName"></span>!</h2>
-          <p>Confirmation आणि join link तुमच्या email वर पाठवली आहे (Inbox / Promotions तपासा). शनिवारी संध्या. 5:55 ला हाच link उघडा, कोणतंही app किंवा registration लागणार नाही.</p>
+          <p>Confirmation आणि join link तुमच्या WhatsApp वर (आणि email दिला असेल तर email वरही) पाठवत आहोत. शनिवारी संध्या. 5:55 ला हाच link उघडा, कोणतंही app किंवा registration लागणार नाही.</p>
           <a class="wa" href="https://insure.finpick.in/live/" target="_blank" rel="noopener" style="background:#E8742A;color:#1A1206">1. Join link: insure.finpick.in/live (save करा)</a>
           <a class="wa" id="waLink" href="https://wa.me/918265083354" target="_blank" rel="noopener">2. WhatsApp वर reminders सुरू करा</a>
           <p class="fine">बटण चाललं नाही तर <span class="num">+91 82650 83354</span> या नंबरवर "LIVE" असं लिहा.</p>
@@ -235,6 +241,7 @@ footer .wrap { padding-block: 28px 40px; font-size: 13px; color: var(--muted); d
     </div>
   </section>
 </main>
+<a class="stickycta" href="#register" id="stickyCta">मोफत जागा राखून ठेवा · 20 सेकंद</a>
 <footer>
   <div class="wrap">
     <p>FinPick · AMFI-registered Mutual Fund Distributor, ARN 121216. Insurance through SIBL, IRDAI Licence No. DB 947/2022/830.</p>
@@ -286,17 +293,26 @@ var WA_NUMBER     = "918265083354";
   }
   var form = document.getElementById("regForm");
   var el = function (id) { return document.getElementById(id); };
+  try {
+    var card = el("register");
+    if ("IntersectionObserver" in window && card) {
+      new IntersectionObserver(function (en) { document.body.classList.toggle("cta-off", en[0].isIntersecting); }, { threshold: 0.15 }).observe(card);
+    }
+    el("stickyCta").addEventListener("click", function () { setTimeout(function () { try { el("name").focus({ preventScroll: true }); } catch (e) {} }, 450); });
+  } catch (e) {}
   el("mobile").addEventListener("input", function () { this.value = this.value.replace(/\D/g, "").slice(0, 10); });
   el("pincode").addEventListener("input", function () { this.value = this.value.replace(/\D/g, "").slice(0, 6); });
   function validate() {
     var ok = true;
     ["nameErr","emailErr","mobileErr","pinErr","selErr","consentErr"].forEach(function (id) { el(id).textContent = ""; });
+    var more = document.querySelector("details.more");
     if (el("name").value.trim().length < 2) { el("nameErr").textContent = "कृपया तुमचं नाव लिहा."; ok = false; }
-    if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(el("email").value.trim())) { el("emailErr").textContent = "बरोबर email लिहा, उदा. nav@gmail.com"; ok = false; }
-    if (!/^[6-9]\d{9}$/.test(el("mobile").value)) { el("mobileErr").textContent = "10 अंकी mobile नंबर लिहा (6, 7, 8 किंवा 9 ने सुरू होणारा)."; ok = false; }
-    if (!/^\d{6}$/.test(el("pincode").value)) { el("pinErr").textContent = "6 अंकी pin code लिहा."; ok = false; }
-    if (!el("family").value || !el("cover").value) { el("selErr").textContent = "कुटुंब आणि सध्याचा cover, दोन्ही निवडा."; ok = false; }
-    if (!el("consent").checked) { el("consentErr").textContent = "Join link पाठवण्यासाठी संमती आवश्यक आहे."; ok = false; }
+    if (!/^[6-9]\d{9}$/.test(el("mobile").value)) { el("mobileErr").textContent = "10 अंकी WhatsApp नंबर लिहा (6, 7, 8 किंवा 9 ने सुरू होणारा)."; ok = false; }
+    if (!el("cover").value) { el("selErr").textContent = "सध्याचा cover निवडा (काहीच नसेल तर 'काहीच नाही')."; ok = false; }
+    var em = el("email").value.trim();
+    if (em && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(em)) { el("emailErr").textContent = "बरोबर email लिहा, किंवा रिकामं ठेवा."; ok = false; if (more) more.open = true; }
+    var pc = el("pincode").value;
+    if (pc && !/^\d{6}$/.test(pc)) { el("pinErr").textContent = "6 अंकी pin code लिहा, किंवा रिकामं ठेवा."; ok = false; if (more) more.open = true; }
     return ok;
   }
   form.addEventListener("submit", function (e) {
@@ -306,7 +322,7 @@ var WA_NUMBER     = "918265083354";
     btn.disabled = true; btn.textContent = "नोंद करत आहोत…";
     var pin = el("pincode").value;
     var src = source();
-    var inPune = /^41[0-2]\d{3}$/.test(pin);
+    var inPune = !pin || /^41[0-2]\d{3}$/.test(pin);
     var name = el("name").value.trim();
     var finish = function () {
       try { if (window.fbq) fbq('track', 'CompleteRegistration', { content_name: 'Saturday Live ' + WEBINAR_DATE }); } catch (err) {}
@@ -318,7 +334,7 @@ var WA_NUMBER     = "918265083354";
     };
     var body = new URLSearchParams({
       category: "Webinar", coverage_type: "Health", name: name, email: el("email").value.trim().toLowerCase(), mobile: el("mobile").value,
-      city: inPune ? "Pune" : "Other", members: el("family").value, existing_cover: el("cover").value,
+      city: inPune ? "Pune" : "Other", members: el("family").value || "Not given", existing_cover: el("cover").value,
       consent: "yes", website: "",
       utm_source: utm("utm_source") || src.web, utm_medium: utm("utm_medium"),
       utm_campaign: utm("utm_campaign") || ("saturday_live_" + WEBINAR_DATE),

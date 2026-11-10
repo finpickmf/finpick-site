@@ -37,6 +37,24 @@
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
+.pop { position: fixed; inset: 0; z-index: 100; display: flex; align-items: flex-end; justify-content: center; background: rgba(10,17,34,.62); animation: popFade .25s ease; }
+.pop-card { position: relative; width: 100%; max-width: 460px; max-height: 92vh; overflow-y: auto; background: var(--surface); color: var(--ink); border-radius: 20px 20px 0 0; padding: 22px 18px calc(18px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 40px rgba(0,0,0,.25); animation: popUp .35s cubic-bezier(.2,.9,.3,1.2); }
+@media (min-width: 640px) { .pop { align-items: center; } .pop-card { border-radius: 20px; padding: 26px 24px; } }
+.pop-x { position: absolute; top: 8px; right: 10px; width: 40px; height: 40px; border: 0; background: transparent; color: var(--muted); font-size: 28px; line-height: 1; cursor: pointer; }
+.pop-live { display: inline-flex; align-items: center; gap: 8px; font: 600 14px/1.2 var(--body); color: var(--orange-text); background: rgba(232,116,42,.12); border-radius: 999px; padding: 6px 12px; margin-bottom: 12px; }
+.pop-live .dot { width: 9px; height: 9px; border-radius: 50%; background: #E5322D; animation: popPulse 1.2s infinite; }
+.pop-eye { font: 600 14px/1.4 var(--body); color: var(--muted); margin: 0 0 6px; }
+.pop h2 { font: 700 23px/1.3 var(--body); margin: 0 0 14px; padding-right: 26px; }
+.pop-opts { display: grid; gap: 10px; }
+.pop-opts button { text-align: left; font: 600 17px/1.3 var(--body); color: var(--ink); background: var(--bg); border: 1.5px solid var(--line); border-radius: 12px; padding: 14px 14px; min-height: 52px; cursor: pointer; transition: transform .12s, border-color .12s; }
+.pop-opts button:hover, .pop-opts button:focus-visible { border-color: var(--orange); transform: translateY(-1px); }
+.pop-insight { font: 600 17px/1.45 var(--body); background: rgba(31,95,168,.10); border-left: 4px solid var(--blue); border-radius: 8px; padding: 12px 14px; margin: 0; }
+.pop .field { margin-top: 10px; }
+.pop details.more { display: none; }
+@keyframes popFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popUp { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes popPulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+@media (prefers-reduced-motion: reduce) { .pop, .pop-card, .pop-live .dot { animation: none; } }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 18px; line-height: 1.55; }
 .wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 h1, h2 { font-family: var(--display); font-weight: 400; text-wrap: balance; line-height: 1.25; margin: 0; }
@@ -242,6 +260,27 @@ details.more[open] summary { margin-bottom: 10px; }
   </section>
 </main>
 <a class="stickycta" href="#register" id="stickyCta">मोफत जागा राखून ठेवा · 20 सेकंद</a>
+<div class="pop" id="pop" hidden role="dialog" aria-modal="true" aria-labelledby="popQ">
+  <div class="pop-card">
+    <button type="button" class="pop-x" id="popX" aria-label="बंद करा">×</button>
+    <div class="pop-live"><span class="dot"></span> LIVE सुरू व्हायला <b id="popCount">…</b></div>
+    <div id="popStep1">
+      <p class="pop-eye">10 सेकंदांचा quick check</p>
+      <h2 id="popQ">तुमच्या कुटुंबाचा health cover सध्या कोणता आहे?</h2>
+      <div class="pop-opts">
+        <button type="button" data-v="Office only">🏢 फक्त office चा</button>
+        <button type="button" data-v="Own below 5L">📄 स्वतःचा, ₹5 लाखांपेक्षा कमी</button>
+        <button type="button" data-v="Own 5L plus">✅ स्वतःचा, ₹5 लाख किंवा जास्त</button>
+        <button type="button" data-v="None">❔ काहीच नाही / माहीत नाही</button>
+      </div>
+    </div>
+    <div id="popStep2" hidden>
+      <p class="pop-insight" id="popInsight"></p>
+      <p class="pop-eye" style="margin-top:12px">या शनिवारी संध्या. 6 वा. · मोफत · मराठीत</p>
+      <div id="popFormSlot"></div>
+    </div>
+  </div>
+</div>
 <footer>
   <div class="wrap">
     <p>FinPick · AMFI-registered Mutual Fund Distributor, ARN 121216. Insurance through SIBL, IRDAI Licence No. DB 947/2022/830.</p>
@@ -353,6 +392,68 @@ var WA_NUMBER     = "918265083354";
       .catch(function () {})
       .then(function () { clearTimeout(t); finish(); });
   });
+
+  /* ---------- registration pop-up: 1 quick question, then the same form ---------- */
+  try {
+    var pop = el("pop"), shown = false, timer = null, maxScroll = 0;
+    var KEY = "sl_pop_seen";
+    var seen = function () { try { return sessionStorage.getItem(KEY) === "1"; } catch (e) { return false; } };
+    var markSeen = function () { try { sessionStorage.setItem(KEY, "1"); } catch (e) {} };
+    var busy = function () {
+      var a = document.activeElement;
+      return !el("doneView").hidden || (a && form.contains(a)) || el("name").value.trim() || el("mobile").value;
+    };
+    var target = (function () { var p = WEBINAR_DATE.split("-"); return Date.UTC(+p[0], +p[1] - 1, +p[2], 12, 30); })(); // 6 PM IST
+    var tick = function () {
+      var s = Math.max(0, Math.floor((target - Date.now()) / 1000)), d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+      el("popCount").textContent = d > 0 ? d + " दिवस " + h + " तास " + m + " मि." : (h + " तास " + m + " मि. " + sec + " से.");
+    };
+    var insight = {
+      "Office only": "Office cover ही चांगली सुरुवात आहे. पण नोकरी बदलली किंवा सुटली की तो बहुतेक वेळा त्याच दिवशी थांबतो. शनिवारी आपण यावरचा सोपा मार्ग पाहू.",
+      "Own below 5L": "आजच्या hospital खर्चात हा cover किती पुरतो, आणि room rent limit मुळे claim कसा कमी होऊ शकतो, ते शनिवारी तुमच्या policy वरून स्वतः तपासायला शिकाल.",
+      "Own 5L plus": "छान! आता पुढचा प्रश्न: तुमच्या policy त room rent limit, co-pay किंवा sub-limit आहे का? 60 मिनिटांत हे स्वतः तपासायला शिका.",
+      "None": "हरकत नाही, बहुतेक कुटुंबांची सुरुवात इथूनच होते. Policy निवडताना कोणत्या 4 ओळी नक्की पाहायच्या, ते शनिवारी सोप्या मराठीत."
+    };
+    var open = function () {
+      if (shown || seen() || busy()) return;
+      shown = true; markSeen();
+      el("popStep1").hidden = false; el("popStep2").hidden = true;
+      pop.hidden = false; tick(); timer = setInterval(tick, 1000);
+      try { if (window.fbq) fbq('trackCustom', 'SL_PopupOpen'); } catch (e) {}
+      try { pop.querySelector(".pop-opts button").focus({ preventScroll: true }); } catch (e) {}
+    };
+    var close = function () {
+      pop.hidden = true; clearInterval(timer);
+      if (el("popFormSlot").contains(form)) el("formView").appendChild(form);
+    };
+    Array.prototype.forEach.call(pop.querySelectorAll(".pop-opts button"), function (b) {
+      b.addEventListener("click", function () {
+        var v = b.getAttribute("data-v");
+        el("cover").value = v;
+        el("popInsight").textContent = insight[v] || "";
+        el("popFormSlot").appendChild(form);
+        el("submitBtn").textContent = "माझी मोफत जागा पक्की करा";
+        el("popStep1").hidden = true; el("popStep2").hidden = false;
+        try { if (window.fbq) fbq('trackCustom', 'SL_PopupAnswer', { cover: v }); } catch (e) {}
+        setTimeout(function () { try { el("name").focus(); } catch (e) {} }, 60);
+      });
+    });
+    el("popX").addEventListener("click", close);
+    pop.addEventListener("click", function (e) { if (e.target === pop) close(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !pop.hidden) close(); });
+    new MutationObserver(function () {
+      if (!el("doneView").hidden && !pop.hidden) { close(); try { el("register").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }
+    }).observe(el("doneView"), { attributes: true, attributeFilter: ["hidden"] });
+    if (!seen() && !/[?&]nopop=1/.test(location.search)) {
+      setTimeout(open, 9000);
+      window.addEventListener("scroll", function () {
+        var y = window.scrollY, h = document.documentElement.scrollHeight - window.innerHeight;
+        if (h > 0 && y / h > 0.45) open();
+        if (y > maxScroll) maxScroll = y; else if (maxScroll > 700 && maxScroll - y > 350) open(); // scrolling back up = leaving
+      }, { passive: true });
+      document.addEventListener("mouseout", function (e) { if (!e.relatedTarget && e.clientY <= 0) open(); }); // desktop exit intent
+    }
+  } catch (e) {}
 })();
 </script>
 </body>

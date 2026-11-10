@@ -292,6 +292,8 @@ var WA_NUMBER     = "918265083354";
     if (s.indexOf("ref") > -1) return { web: "Referral", ad: "Referral" };
     return { web: "Website", ad: "Website" };
   }
+  function cookie(n) { try { var m = document.cookie.match(new RegExp("(?:^|; )" + n + "=([^;]*)")); return m ? decodeURIComponent(m[1]) : ""; } catch (e) { return ""; } }
+  var EVENT_ID = "slr_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 10);
   var form = document.getElementById("regForm");
   var el = function (id) { return document.getElementById(id); };
   try {
@@ -326,7 +328,7 @@ var WA_NUMBER     = "918265083354";
     var inPune = !pin || /^41[0-2]\d{3}$/.test(pin);
     var name = el("name").value.trim();
     var finish = function () {
-      try { if (window.fbq) fbq('track', 'CompleteRegistration', { content_name: 'Saturday Live ' + WEBINAR_DATE }); } catch (err) {}
+      try { if (window.fbq) fbq('track', 'CompleteRegistration', { content_name: 'Saturday Live ' + WEBINAR_DATE }, { eventID: EVENT_ID }); } catch (err) {}
       var msg = "LIVE\nनमस्कार, मी " + name + ". FinPick Saturday Live (" + WEBINAR_DATE + ") साठी registration केलं आहे. Join link पाठवा.";
       el("waLink").href = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(msg);
       el("doneName").textContent = name.split(" ")[0];
@@ -342,7 +344,8 @@ var WA_NUMBER     = "918265083354";
       utm_content: utm("utm_content"), utm_term: utm("utm_term"),
       fbclid: params.get("fbclid") || "", gclid: params.get("gclid") || "",
       page: "webinar", site: location.hostname, ref: "saturday_live", referrer: document.referrer,
-      submitted_at: new Date().toISOString(), webinar_date: WEBINAR_DATE, webinar_source: src.web, pincode: pin
+      submitted_at: new Date().toISOString(), webinar_date: WEBINAR_DATE, webinar_source: src.web, pincode: pin,
+      event_id: EVENT_ID, fbp: cookie("_fbp"), fbc: cookie("_fbc"), page_url: location.href.split("#")[0]
     });
     var ctrl = ("AbortController" in window) ? new AbortController() : null;
     var t = setTimeout(function () { if (ctrl) ctrl.abort(); }, 8000);

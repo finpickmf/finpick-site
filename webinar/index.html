@@ -239,6 +239,11 @@ details.more[open] summary { margin-bottom: 10px; }
               <p class="err" id="mobileErr" role="alert"></p>
             </div>
             <div class="field">
+              <label for="email">Email <span class="en">(optional) · Bonus PDF आणि reminders साठी</span></label>
+              <input type="email" id="email" name="email" autocomplete="email" inputmode="email" placeholder="tumche.nav@gmail.com">
+              <p class="err" id="emailErr" role="alert"></p>
+            </div>
+            <div class="field">
               <label for="cover">सध्याचा health cover <span class="en">Current cover</span></label>
               <select id="cover" name="cover" required>
                 <option value="">निवडा</option>
@@ -250,12 +255,7 @@ details.more[open] summary { margin-bottom: 10px; }
               <p class="err" id="selErr" role="alert"></p>
             </div>
             <details class="more">
-              <summary>Email आणि इतर माहिती <span class="en">(optional)</span></summary>
-              <div class="field">
-                <label for="email">Email <span class="en">reminders साठी</span></label>
-                <input type="email" id="email" name="email" autocomplete="email" inputmode="email" placeholder="tumche.nav@gmail.com">
-                <p class="err" id="emailErr" role="alert"></p>
-              </div>
+              <summary>इतर माहिती <span class="en">(optional)</span></summary>
               <div class="row2">
                 <div class="field">
                   <label for="pincode">Pin code</label>
@@ -429,7 +429,7 @@ var WA_NUMBER     = "918265083354";
     if (!/^[6-9]\d{9}$/.test(el("mobile").value)) { el("mobileErr").textContent = "10 अंकी WhatsApp नंबर लिहा (6, 7, 8 किंवा 9 ने सुरू होणारा)."; ok = false; }
     if (!el("cover").value) { el("selErr").textContent = "सध्याचा cover निवडा (काहीच नसेल तर 'काहीच नाही')."; ok = false; }
     var em = el("email").value.trim();
-    if (em && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(em)) { el("emailErr").textContent = "बरोबर email लिहा, किंवा रिकामं ठेवा."; ok = false; if (more) more.open = true; }
+    if (em && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(em)) { el("emailErr").textContent = "बरोबर email लिहा, किंवा रिकामं ठेवा."; ok = false; }
     var pc = el("pincode").value;
     if (pc && !/^\d{6}$/.test(pc)) { el("pinErr").textContent = "6 अंकी pin code लिहा, किंवा रिकामं ठेवा."; ok = false; if (more) more.open = true; }
     return ok;

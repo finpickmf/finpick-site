@@ -72,6 +72,19 @@
 .pop-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 2px; }
 .pop-chips span { font: 600 13px/1 var(--body); color: var(--ok); background: rgba(30,122,70,.10); border-radius: 99px; padding: 7px 10px; }
 .pop .field { margin-top: 10px; }
+.card-head { margin: -28px -28px 20px; padding: 18px 20px 16px; border-radius: 14px 14px 0 0; color: #F4EFE6; background: radial-gradient(120% 90% at 100% 0%, rgba(232,116,42,.45) 0%, rgba(232,116,42,0) 55%), linear-gradient(160deg, #1B2D52 0%, #0E1830 100%); }
+.card-head .pop-host { padding-right: 0; }
+@media (max-width: 420px) { .card-head { margin: -22px -18px 18px; padding: 16px; } }
+@media (min-width: 900px) {
+  .pop-card { max-width: 540px; }
+  .pop-head { padding: 22px 26px 20px; }
+  .pop-body { padding: 20px 26px 24px; }
+  .pop h2 { font-size: 25px; }
+  .pop-opts { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .pop-opts button { flex-direction: column; align-items: flex-start; min-height: 112px; padding: 14px; font-size: 17px; }
+  .pop-opts button .ch { display: none; }
+  .pop-tiles b { font-size: 30px; }
+}
 .pop-card.s2 .pop-head { padding: 12px 16px 12px; }
 .pop-card.s2 .pop-host img { width: 40px; height: 40px; border-width: 2px; }
 .pop-card.s2 .pop-host span { display: none; }
@@ -198,6 +211,19 @@ details.more[open] summary { margin-bottom: 10px; }
         </ul>
       </div>
       <div class="card" id="register">
+        <div class="card-head">
+          <div class="pop-host">
+            <img src="nikhil-avatar.jpg" alt="निखिल गौड" width="54" height="54">
+            <div><b>निखिल गौड यांच्यासोबत मोफत LIVE</b><span>या शनिवारी संध्या. 6 वा. · मराठीत · Online</span></div>
+          </div>
+          <div class="pop-live"><span class="dot"></span> LIVE सुरू व्हायला उरले</div>
+          <div class="pop-tiles">
+            <div><b data-cd="d">0</b><small>दिवस</small></div>
+            <div><b data-cd="h">00</b><small>तास</small></div>
+            <div><b data-cd="m">00</b><small>मिनिटं</small></div>
+            <div><b data-cd="s">00</b><small>सेकंद</small></div>
+          </div>
+        </div>
         <div id="formView">
           <h2>मोफत जागा राखून ठेवा</h2>
           <p class="lead">फक्त नाव आणि WhatsApp नंबर. 20 सेकंद लागतील.</p>
@@ -306,10 +332,10 @@ details.more[open] summary { margin-bottom: 10px; }
       </div>
       <div class="pop-live"><span class="dot"></span> LIVE सुरू व्हायला उरले</div>
       <div class="pop-tiles" aria-live="off">
-        <div><b id="popD">0</b><small>दिवस</small></div>
-        <div><b id="popH">00</b><small>तास</small></div>
-        <div><b id="popM">00</b><small>मिनिटं</small></div>
-        <div><b id="popS">00</b><small>सेकंद</small></div>
+        <div><b id="popD" data-cd="d">0</b><small>दिवस</small></div>
+        <div><b id="popH" data-cd="h">00</b><small>तास</small></div>
+        <div><b id="popM" data-cd="m">00</b><small>मिनिटं</small></div>
+        <div><b id="popS" data-cd="s">00</b><small>सेकंद</small></div>
       </div>
     </div>
     <div class="pop-body">
@@ -458,8 +484,10 @@ var WA_NUMBER     = "918265083354";
     var tick = function () {
       var s = Math.max(0, Math.floor((target - Date.now()) / 1000)), d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
       var z = function (n) { return (n < 10 ? "0" : "") + n; };
-      el("popD").textContent = d; el("popH").textContent = z(h); el("popM").textContent = z(m); el("popS").textContent = z(sec);
+      var v = { d: d, h: z(h), m: z(m), s: z(sec) };
+      Array.prototype.forEach.call(document.querySelectorAll("[data-cd]"), function (n) { n.textContent = v[n.getAttribute("data-cd")]; });
     };
+    tick(); timer = setInterval(tick, 1000);
     var insight = {
       "Office only": "Office cover ही चांगली सुरुवात आहे. पण नोकरी बदलली किंवा सुटली की तो बहुतेक वेळा त्याच दिवशी थांबतो. शनिवारी आपण यावरचा सोपा मार्ग पाहू.",
       "Own below 5L": "आजच्या hospital खर्चात हा cover किती पुरतो, आणि room rent limit मुळे claim कसा कमी होऊ शकतो, ते शनिवारी तुमच्या policy वरून स्वतः तपासायला शिकाल.",
@@ -472,12 +500,12 @@ var WA_NUMBER     = "918265083354";
       el("popStep1").hidden = false; el("popStep2").hidden = true;
       pop.querySelector(".pop-card").classList.remove("s2");
       el("popStepTxt").textContent = "पायरी 1 / 2"; el("popBar").style.width = "50%";
-      pop.hidden = false; tick(); timer = setInterval(tick, 1000);
+      pop.hidden = false; tick();
       try { if (window.fbq) fbq('trackCustom', 'SL_PopupOpen'); } catch (e) {}
       try { pop.querySelector(".pop-opts button").focus({ preventScroll: true }); } catch (e) {}
     };
     var close = function () {
-      pop.hidden = true; clearInterval(timer);
+      pop.hidden = true;
       if (el("popFormSlot").contains(form)) el("formView").appendChild(form);
       try { el("cover").closest(".field").hidden = false; } catch (e) {}
     };

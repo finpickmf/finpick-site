@@ -12,17 +12,20 @@
   var MEET="https://meet.google.com/jqn-hzha-ktb";
   // Attendance: emails link here as /live/?l=<Zoho lead id>
   var id=new URLSearchParams(location.search).get("l");
-  if(id && /^\d{10,25}$/.test(id)){
-    try{localStorage.setItem("fp_lead",id)}catch(e){}
-    try{fetch("https://project-rainfall-60087439549.development.catalystserverless.in/server/lp_lead/?att="+id,{method:"POST",headers:{"Content-Type":"text/plain"},body:"{}",keepalive:true}).catch(function(){})}catch(e){}
-  }
   // Gate: Meet opens only Saturday 17:55-19:30 IST (host joins 17:45)
   function ist(){var n=new Date();return new Date(n.getTime()+n.getTimezoneOffset()*60000+330*60000)}
   function openNow(){var t=ist();var m=t.getHours()*60+t.getMinutes();return t.getDay()===6&&m>=17*60+55&&m<19*60+30}
   function nextStart(){var t=ist();var d=new Date(t);var add=(6-t.getDay()+7)%7;d.setDate(t.getDate()+add);d.setHours(17,55,0,0);if(d<=t||(t.getDay()===6&&(t.getHours()*60+t.getMinutes())>=19*60+30)){d.setDate(d.getDate()+7)}return d}
-  var go=function(){location.replace(MEET)};
+  var went=false;
+  var go=function(){if(went)return;went=true;var delay=600;
+    if(id && /^\d{10,25}$/.test(id)){delay=1200;
+      try{localStorage.setItem("fp_lead",id)}catch(e){}
+      try{fetch("https://project-rainfall-60087439549.development.catalystserverless.in/server/lp_lead/?att="+id,{method:"POST",headers:{"Content-Type":"text/plain"},body:"{}",keepalive:true}).catch(function(){})}catch(e){}
+    }
+    setTimeout(function(){location.replace(MEET)},delay)};
   var TEST=new URLSearchParams(location.search).get("test")==="1";
-  if(TEST||openNow()){setTimeout(go,id?1200:600);return}
+  if(TEST||openNow()){
+    go();return}
   document.getElementById("msg").textContent="Live सुरू होईल शनिवारी संध्या. 6:00 वा.";
   document.getElementById("sub").textContent="ही page उघडी ठेवा. वेळ झाली की Live room आपोआप उघडेल.";
   document.getElementById("manual").style.display="none";

@@ -282,7 +282,12 @@ details.more[open] summary { margin-bottom: 10px; }
         <div id="doneView" class="done" hidden>
           <h2>Registration झालं, <span id="doneName"></span>!</h2>
           <p>Confirmation आणि join link तुमच्या WhatsApp वर (आणि email दिला असेल तर email वरही) पाठवत आहोत. रविवारी सकाळी 10:55 ला हाच link उघडा, कोणतंही app किंवा registration लागणार नाही.</p>
-          <a class="wa" href="https://insure.finpick.in/live/" target="_blank" rel="noopener" style="background:#E8742A;color:#1A1206">Join link: insure.finpick.in/live (save करा)</a>
+          <div style="border:2px dashed #E8742A;border-radius:14px;padding:14px;margin:12px 0;text-align:center;background:#FFF7F0">
+            <div style="font-size:13px;font-weight:700;letter-spacing:.06em;color:#A84A12">तुमचा JOIN LINK · रविवारी सकाळी 10:55 ला उघडा</div>
+            <div style="font-size:22px;font-weight:800;color:#14213D;margin:6px 0 10px;word-break:break-all">insure.finpick.in/live</div>
+            <a class="wa" id="calLink" href="#" target="_blank" rel="noopener" style="background:#14213D;color:#fff;margin-bottom:8px">📅 Calendar मध्ये जोडा (reminder येईल)</a>
+            <a class="wa" id="copyLink" href="https://insure.finpick.in/live/" style="background:#E8742A;color:#1A1206">🔗 Link copy करा</a>
+          </div>
           <p class="fine">WhatsApp confirmation आणि reminders <span class="num">+91 82650 83354</span> या नंबरवरून येतील. हा नंबर save करा, म्हणजे link सहज दिसेल. काही प्रश्न असल्यास याच नंबरवर message करा.</p>
           <a id="waLink" href="https://wa.me/918265083354" hidden></a>
         </div>
@@ -390,6 +395,17 @@ var WEBINAR_DATE = (function () {
   var m = ["जानेवारी","फेब्रुवारी","मार्च","एप्रिल","मे","जून","जुलै","ऑगस्ट","सप्टेंबर","ऑक्टोबर","नोव्हेंबर","डिसेंबर"];
   var p = WEBINAR_DATE.split("-"), el = document.getElementById("webinarDateText");
   if (el) el.textContent = parseInt(p[2], 10) + " " + m[parseInt(p[1], 10) - 1] + " " + p[0];
+})();
+(function () {
+  var p = WEBINAR_DATE.replace(/-/g, ""), cal = document.getElementById("calLink"), cp = document.getElementById("copyLink");
+  if (cal) cal.href = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + encodeURIComponent("FinPick Live (मोफत मराठी webinar)") +
+    "&dates=" + p + "T052500Z/" + p + "T063000Z&ctz=Asia/Kolkata&location=" + encodeURIComponent("https://insure.finpick.in/live/") +
+    "&details=" + encodeURIComponent("Join link: https://insure.finpick.in/live/\nसकाळी 10:55 ला उघडा. कोणतंही app लागणार नाही.\n- FinPick");
+  if (cp) cp.addEventListener("click", function (e) {
+    e.preventDefault();
+    var done = function () { cp.textContent = "✅ Link copy झाला"; };
+    try { navigator.clipboard.writeText("https://insure.finpick.in/live/").then(done, function () { location.href = cp.href; }); } catch (err) { location.href = cp.href; }
+  });
 })();
 var WA_NUMBER     = "918265083354";
 (function () {

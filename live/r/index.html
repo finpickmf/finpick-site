@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="mr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>FinPick Saturday Live · जागा राखली</title><meta name="robots" content="noindex">
+<title>FinPick Sunday Live · जागा राखली</title><meta name="robots" content="noindex">
 <link rel="icon" href="https://finpick.in/assets/favicona.png">
 <style>
 :root{--bg:#14213D;--card:#1F2E52;--ink:#F4EFE6;--muted:#C9D6E8;--orange:#E8742A;--ok:#5CC48A;--line:#33456E}
@@ -20,15 +20,15 @@ footer{font-size:12px;color:var(--muted);margin-top:8px}
 [hidden]{display:none!important}
 </style></head>
 <body><main>
-<div class="logo"><span class="f">Fin</span><span class="p">Pick</span><small>Saturday Live</small></div>
+<div class="logo"><span class="f">Fin</span><span class="p">Pick</span><small>Sunday Live</small></div>
 
 <section id="wait" class="card"><p>तुमची जागा राखत आहोत…</p></section>
 
 <section id="ok" hidden>
   <h1><span class="ok">✓</span> <span id="nm">तुमची</span> जागा राखली!</h1>
   <div class="card">
-    <p class="muted">FinPick Saturday Live · मोफत · मराठीत</p>
-    <p class="when" id="when">शनिवार, संध्या. 6 वा.</p>
+    <p class="muted">FinPick Sunday Live · मोफत · मराठीत</p>
+    <p class="when" id="when">रविवार, सकाळी 11 वा.</p>
     <p>Google Meet वर. Join link तुम्हाला WhatsApp आणि email वर येईल, आणि Live च्या दिवशी 3 वा. आणि 5 वा. आठवण येईल.</p>
   </div>
   <div class="card">
@@ -66,7 +66,7 @@ footer{font-size:12px;color:var(--muted);margin-top:8px}
       if(!j||!j.ok){bad(j&&j.reason==="expired"?"ही link आता चालू नाही. खालील बटण दाबून नोंदणी करा.":null);return}
       if(j.lead){try{localStorage.setItem("fp_lead",String(j.lead))}catch(e){}}
       if(j.first) el("nm").textContent=j.first+", तुमची";
-      if(j.date&&/^\d{4}-\d{2}-\d{2}$/.test(j.date)){var p=j.date.split("-");el("when").textContent="शनिवार, "+Number(p[2])+" "+MR[Number(p[1])-1]+", संध्या. 6 वा."}
+      if(j.date&&/^\d{4}-\d{2}-\d{2}$/.test(j.date)){var p=j.date.split("-");el("when").textContent="रविवार, "+Number(p[2])+" "+MR[Number(p[1])-1]+", सकाळी 11 वा."}
       el("wait").hidden=true;el("ok").hidden=false;
     })
     .catch(function(){bad("Internet अडचण आली. थोड्या वेळाने पुन्हा link दाबा, किंवा खालील बटणाने नोंदणी करा.")});

@@ -1,40 +1,62 @@
 <!doctype html>
-<html lang="mr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FinPick Live</title><meta name="robots" content="noindex">
+<html lang="mr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FinPick Sunday Live</title><meta name="robots" content="noindex">
 <link rel="icon" href="https://finpick.in/assets/favicona.png">
-
-<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#14213D;color:#F4EFE6;font-family:Mukta,'Noto Sans Devanagari',Arial,sans-serif;text-align:center;padding:16px}
-.l{font-weight:700;font-size:34px}.f{color:#F7931E}.p{color:#6FA8F0}p{color:#C9D6E8;font-size:18px}a{color:#F2A365}</style></head>
-<body><div><div style="background:#fff;display:inline-block;border-radius:14px;padding:10px 18px;margin-bottom:10px"><img src="/live/finpick-logo.png" alt="FinPick" style="height:44px;display:block"></div><div class="l">Saturday Live</div>
-<p id="msg">तुमची Live room उघडत आहे…</p><div id="cd" style="display:none;font-size:40px;font-weight:700;color:#F2A365;letter-spacing:2px;margin:6px 0"></div><p id="sub" style="font-size:15px">या शनिवारी संध्या. 6:00 वा. · नाव टाकून "Join" / "Ask to join" दाबा</p><p id="manual"><a href="https://meet.google.com/jqn-hzha-ktb">उघडली नाही तर इथे click करा</a></p></div>
+<style>
+:root{--navy:#0E1830;--card:#14213D;--ink:#F4EFE6;--muted:#C9D6E8;--orange:#E8742A;--blue:#0B4EA8}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--navy);color:var(--ink);font-family:Mukta,'Noto Sans Devanagari','Nirmala UI',Arial,sans-serif}
+header{background:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+header img{height:38px;display:block}
+.live{display:inline-flex;align-items:center;gap:8px;background:var(--orange);color:#fff;font-weight:700;font-size:14px;letter-spacing:1px;padding:6px 12px;border-radius:30px}
+.dot{width:8px;height:8px;border-radius:50%;background:#fff;animation:p 1.2s infinite}@keyframes p{50%{opacity:.25}}
+main{max-width:1100px;margin:0 auto;padding:14px 12px 28px}
+h1{font-size:20px;line-height:1.35;margin:4px 2px 12px;font-weight:700}
+.player{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+@media (max-width:700px){.player{aspect-ratio:auto;height:52vh}}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.btn{flex:1 1 220px;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font-weight:700;font-size:16px;padding:13px 14px;border-radius:12px}
+.wa{background:#1FA855;color:#fff}.pdf{background:var(--card);color:var(--ink);border:1px solid #33456E}
+.tip{color:var(--muted);font-size:14px;margin:12px 2px 0;line-height:1.5}
+.tip a{color:#F2A365}
+.wait{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px;background:var(--card)}.wait[hidden]{display:none}.wt{font-size:20px;font-weight:700;margin:0 0 6px}.cd{font-size:40px;font-weight:700;color:#F2A365;letter-spacing:2px}.ws{color:var(--muted);font-size:15px;margin:8px 0 0}
+footer{color:#6F7F9F;font-size:12px;text-align:center;padding:10px}
+</style></head>
+<body>
+<header><img src="/live/finpick-logo.png" alt="FinPick"><span class="live"><span class="dot"></span>SUNDAY LIVE</span></header>
+<main>
+<h1>तुमची Health Policy खरंच पुरेशी आहे का? · Host: निखिल गौड</h1>
+<div class="player"><div id="wait" class="wait" hidden><p class="wt">Live सुरू होईल रविवारी सकाळी 11:00 वा.</p><div id="cd" class="cd"></div><p class="ws">ही page उघडी ठेवा. 10:45 ला Live room आपोआप सुरू होईल.</p></div><iframe id="pl" title="FinPick Sunday Live" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+<div class="row">
+<a class="btn wa" id="wa" href="#">💬 प्रश्न विचारा (WhatsApp)</a>
+<a class="btn pdf" href="/live/policy-check-sheet.pdf" target="_blank">📄 Health Policy Check Sheet</a>
+</div>
+<p class="tip">Video सुरू होत नसेल तर: page एकदा refresh करा, आवाज (unmute) चालू करा. तरीही अडचण आली तर <a id="alt" href="#" target="_blank">इथे click करा</a>.</p>
+</main>
+<footer>FinPick · शैक्षणिक सत्र</footer>
 <script>
 (function(){
-  var MEET="https://meet.google.com/jqn-hzha-ktb";
-  // Attendance: emails link here as /live/?l=<Zoho lead id>
-  var id=new URLSearchParams(location.search).get("l");
-  // Gate: Meet opens only Saturday 17:55-19:30 IST (host joins 17:45)
+  var WID="__WID__"; // webinar.gg webinar for the current Sunday
+  var D=document, $=function(i){return D.getElementById(i)};
+  $("alt").href="https://webinar.gg/webinar-page/"+WID;
+  $("wa").href="https://wa.me/918265083354?text="+encodeURIComponent("Sunday Live प्रश्न: ");
+  var q=new URLSearchParams(location.search), id=q.get("l");
+  if(!id){try{id=localStorage.getItem("fp_lead")}catch(e){}}
+  if(id && /^\d{10,25}$/.test(id)){try{localStorage.setItem("fp_lead",id)}catch(e){}}
+  // Gate: room opens Sunday 10:45-12:30 IST
   function ist(){var n=new Date();return new Date(n.getTime()+n.getTimezoneOffset()*60000+330*60000)}
-  function openNow(){var t=ist();var m=t.getHours()*60+t.getMinutes();return t.getDay()===6&&m>=17*60+55&&m<19*60+30}
-  function nextStart(){var t=ist();var d=new Date(t);var add=(6-t.getDay()+7)%7;d.setDate(t.getDate()+add);d.setHours(17,55,0,0);if(d<=t||(t.getDay()===6&&(t.getHours()*60+t.getMinutes())>=19*60+30)){d.setDate(d.getDate()+7)}return d}
-  var went=false;
-  var go=function(){if(went)return;went=true;var delay=600;
-    if(id && /^\d{10,25}$/.test(id)){delay=1200;
-      try{localStorage.setItem("fp_lead",id)}catch(e){}
-      try{fetch("https://project-rainfall-60087439549.development.catalystserverless.in/server/lp_lead/?att="+id,{method:"POST",headers:{"Content-Type":"text/plain"},body:"{}",keepalive:true}).catch(function(){})}catch(e){}
-    }
-    setTimeout(function(){location.replace(MEET)},delay)};
-  var TEST=new URLSearchParams(location.search).get("test")==="1";
-  if(TEST||openNow()){
-    go();return}
-  document.getElementById("msg").textContent="Live सुरू होईल शनिवारी संध्या. 6:00 वा.";
-  document.getElementById("sub").textContent="ही page उघडी ठेवा. वेळ झाली की Live room आपोआप उघडेल.";
-  document.getElementById("manual").style.display="none";
-  var cd=document.getElementById("cd");cd.style.display="block";
-  var target=nextStart();
-  function tick(){var t=ist();var s=Math.max(0,Math.floor((target-t)/1000));if(s===0||openNow()){go();return}
+  function openNow(){var t=ist(),m=t.getHours()*60+t.getMinutes();return t.getDay()===0&&m>=10*60+45&&m<12*60+30}
+  function nextStart(){var t=ist(),d=new Date(t);d.setDate(t.getDate()+((7-t.getDay())%7));d.setHours(10,45,0,0);if(d<=t)d.setDate(d.getDate()+7);return d}
+  var opened=false;
+  function open(){if(opened)return;opened=true;$("wait").hidden=true;$("pl").src="https://webinar.gg/embed/"+WID;
+    if(id && /^\d{10,25}$/.test(id)){try{fetch("https://project-rainfall-60087439549.development.catalystserverless.in/server/lp_lead/?att="+id,{method:"POST",headers:{"Content-Type":"text/plain"},body:"{}",keepalive:true}).catch(function(){})}catch(e){}}}
+  if(q.get("test")==="1"||openNow()){open();return}
+  $("wait").hidden=false;var target=nextStart();
+  function tick(){var s=Math.max(0,Math.floor((target-ist())/1000));if(s===0||openNow()){open();return}
     var d=Math.floor(s/86400),h=Math.floor(s%86400/3600),mi=Math.floor(s%3600/60),se=s%60;
-    cd.textContent=(d?d+" दिवस ":"")+String(h).padStart(2,"0")+":"+String(mi).padStart(2,"0")+":"+String(se).padStart(2,"0")}
-  tick();setInterval(tick,1000);
+    $("cd").textContent=(d?d+" दिवस ":"")+String(h).padStart(2,"0")+":"+String(mi).padStart(2,"0")+":"+String(se).padStart(2,"0")}
+  tick();var iv=setInterval(function(){tick();if(opened)clearInterval(iv)},1000);
 })();
 </script>
 </body></html>

@@ -22,12 +22,35 @@ h1{font-size:20px;line-height:1.35;margin:4px 2px 12px;font-weight:700}
 .tip a{color:#F2A365}
 .wait{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px;background:var(--card)}.wait[hidden]{display:none}.wt{font-size:20px;font-weight:700;margin:0 0 6px}.cd{font-size:40px;font-weight:700;color:#F2A365;letter-spacing:2px}.ws{color:var(--muted);font-size:15px;margin:8px 0 0}
 footer{color:#6F7F9F;font-size:12px;text-align:center;padding:10px}
+.player.waiting{aspect-ratio:auto;height:auto}.player.waiting .wait{position:static;padding:22px 16px}.player.waiting iframe{display:none}
+.jc{margin-top:14px;background:#fff;color:#14213D;border-radius:14px;padding:16px;border-top:5px solid var(--orange)}
+.jt{margin:0 0 4px;font-size:19px;font-weight:700}
+.js{margin:0 0 10px;font-size:15px;line-height:1.5;color:#3F4656}
+.jd{margin:0 0 10px;font-size:16px;font-weight:700;color:#A84A12}
+.lk{display:flex;gap:8px}
+.lk input{flex:1;min-width:0;font:inherit;font-size:15px;padding:11px 12px;border:1.5px solid #CBD3E1;border-radius:10px;background:#F6F8FC;color:#14213D}
+.lk button,.jc .btn{cursor:pointer;border:0;font-family:inherit}
+.lk button{font-weight:700;font-size:15px;padding:0 16px;border-radius:10px;background:#14213D;color:#fff;white-space:nowrap}
+.jc .row{margin-top:12px}
+.share{background:#1FA855;color:#fff}.cal{background:#EEF2FA;color:#14213D;border:1px solid #CBD3E1}
+.ok{font-size:14px;color:#1F8A4C;font-weight:700;margin:6px 0 0;min-height:1em}
 </style></head>
 <body>
 <header><img src="/live/finpick-logo.png" alt="FinPick"><span class="live"><span class="dot"></span>SUNDAY LIVE</span></header>
 <main>
 <h1>तुमची Health Policy खरंच पुरेशी आहे का? · Host: निखिल गौड</h1>
 <div class="player"><div id="wait" class="wait" hidden><p class="wt">Live सुरू होईल रविवारी सकाळी 11:00 वा.</p><div id="cd" class="cd"></div><p class="ws">ही page उघडी ठेवा. 10:45 ला Live room आपोआप सुरू होईल.</p></div><iframe id="pl" title="FinPick Sunday Live" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+<section class="jc">
+<p class="jt">🔗 तुमची Live join link</p>
+<p class="jd" id="jd">📅 रविवार · सकाळी 11 ते 12 · मोफत · मराठीत</p>
+<p class="js">Live ला join करण्यासाठी <b>हीच link</b> आहे. रविवारी सकाळी 10:45 नंतर ही link उघडा, Live याच page वर आपोआप सुरू होईल. वेगळं app, Zoom किंवा passcode लागणार नाही.</p>
+<div class="lk"><input id="lk" readonly aria-label="Join link"><button id="cp" type="button">📋 Copy</button></div>
+<p class="ok" id="ok"></p>
+<div class="row">
+<button class="btn share" id="sh" type="button">📤 मित्र-नातेवाईकांना invite करा</button>
+<a class="btn cal" id="cal" href="#" target="_blank" rel="noopener">🗓️ Calendar मध्ये reminder लावा</a>
+</div>
+</section>
 <div class="row">
 <a class="btn wa" id="wa" href="#">💬 प्रश्न विचारा (WhatsApp)</a>
 <a class="btn pdf" href="/live/policy-check-sheet.pdf" target="_blank">📄 Health Policy Check Sheet</a>
@@ -46,15 +69,29 @@ footer{color:#6F7F9F;font-size:12px;text-align:center;padding:10px}
   var q=new URLSearchParams(location.search), id=q.get("l");
   if(!id){try{id=localStorage.getItem("fp_lead")}catch(e){}}
   if(id && /^\d{10,25}$/.test(id)){try{localStorage.setItem("fp_lead",id)}catch(e){}}
+  // Join-link card: personal link (counts attendance), copy, share (registration link for friends), calendar
+  var MONTHS=["जानेवारी","फेब्रुवारी","मार्च","एप्रिल","मे","जून","जुलै","ऑगस्ट","सप्टेंबर","ऑक्टोबर","नोव्हेंबर","डिसेंबर"];
+  var JOIN="https://insure.finpick.in/live/"+(id && /^\d{10,25}$/.test(id)?"?l="+id:"");
+  $("lk").value=JOIN;
+  (function(){var t=ist(),d=new Date(t);var add=(7-t.getDay())%7;if(add===0&&t.getHours()*60+t.getMinutes()>=12*60+30)add=7;d.setDate(t.getDate()+add);
+    $("jd").textContent="📅 रविवार, "+d.getDate()+" "+MONTHS[d.getMonth()]+" · सकाळी 11 ते 12 · मोफत · मराठीत";
+    var p=function(n){return String(n).padStart(2,"0")},ymd=d.getFullYear()+p(d.getMonth()+1)+p(d.getDate());
+    $("cal").href="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent("FinPick Sunday Live (मोफत, मराठीत)")+"&dates="+ymd+"T053000Z/"+ymd+"T063000Z&details="+encodeURIComponent("Join link: "+JOIN+"\nसकाळी 10:45 नंतर link उघडा.")+"&location="+encodeURIComponent(JOIN);})();
+  function done(m){$("ok").textContent=m;setTimeout(function(){$("ok").textContent=""},3000)}
+  $("cp").onclick=function(){var i=$("lk");i.select();i.setSelectionRange(0,999);
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(JOIN).then(function(){done("✅ Link copy झाली")},function(){try{D.execCommand("copy");done("✅ Link copy झाली")}catch(e){}})}else{try{D.execCommand("copy");done("✅ Link copy झाली")}catch(e){}}};
+  var REG="https://insure.finpick.in/webinar/?utm_source=share&utm_medium=friend&utm_campaign=live_share";
+  var MSG="नमस्कार! रविवारी सकाळी 11 वा. FinPick Sunday Live आहे: \"तुमची Health Policy खरंच पुरेशी आहे का?\"\nमोफत · मराठीत · 1 तास · Host: निखिल गौड\nतुम्हीही जरूर join करा, इथे नाव नोंदवा 👇\n"+REG;
+  $("sh").onclick=function(){if(navigator.share){navigator.share({title:"FinPick Sunday Live",text:MSG}).catch(function(){})}else{window.open("https://wa.me/?text="+encodeURIComponent(MSG),"_blank")}};
   // Gate: room opens Sunday 10:45-12:30 IST
   function ist(){var n=new Date();return new Date(n.getTime()+n.getTimezoneOffset()*60000+330*60000)}
   function openNow(){var t=ist(),m=t.getHours()*60+t.getMinutes();return t.getDay()===0&&m>=10*60+45&&m<12*60+30}
   function nextStart(){var t=ist(),d=new Date(t);d.setDate(t.getDate()+((7-t.getDay())%7));d.setHours(10,45,0,0);if(d<=t)d.setDate(d.getDate()+7);return d}
   var opened=false;
-  function open(){if(opened)return;opened=true;$("wait").hidden=true;$("pl").src="https://webinar.gg/embed/"+WID;
+  function open(){if(opened)return;opened=true;$("wait").hidden=true;$("wait").parentNode.classList.remove("waiting");$("pl").src="https://webinar.gg/embed/"+WID;
     if(id && /^\d{10,25}$/.test(id)){try{fetch("https://project-rainfall-60087439549.development.catalystserverless.in/server/lp_lead/?att="+id,{method:"POST",headers:{"Content-Type":"text/plain"},body:"{}",keepalive:true}).catch(function(){})}catch(e){}}}
   if(q.get("test")==="1"||openNow()){open();return}
-  $("wait").hidden=false;var target=nextStart();
+  $("wait").hidden=false;$("wait").parentNode.classList.add("waiting");var target=nextStart();
   function tick(){var s=Math.max(0,Math.floor((target-ist())/1000));if(s===0||openNow()){open();return}
     var d=Math.floor(s/86400),h=Math.floor(s%86400/3600),mi=Math.floor(s%3600/60),se=s%60;
     $("cd").textContent=(d?d+" दिवस ":"")+String(h).padStart(2,"0")+":"+String(mi).padStart(2,"0")+":"+String(se).padStart(2,"0")}

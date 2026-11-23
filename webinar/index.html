@@ -384,7 +384,7 @@ var WEBINAR_DATE = (function () {
   var add = (0 - d.getUTCDay() + 7) % 7;
   if (add === 0 && nowIst.getUTCHours() >= 12) add = 7; // after 12 noon Sunday, move to next week
   d = new Date(d.getTime() + add * 86400000);
-  if (d.getUTCDate() >= 8 && d.getUTCDate() <= 14) d = new Date(d.getTime() + 7 * 86400000); // 2nd Sunday = SIP Live (insure.finpick.in/sip/)
+  if (d.getTime() >= Date.UTC(2027, 0, 1) && d.getUTCDate() >= 8 && d.getUTCDate() <= 14) d = new Date(d.getTime() + 7 * 86400000); // from Jan 2027 the 2nd Sunday is SIP Live (insure.finpick.in/sip/); Dec 2026 all Sundays are health
   // Internal demo run: ?demo=YYYY-MM-DD (a Sunday within the next 14 days) books that date instead
   var demo = new URLSearchParams(location.search).get("demo");
   if (demo && /^\d{4}-\d{2}-\d{2}$/.test(demo)) {

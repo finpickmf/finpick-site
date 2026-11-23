@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="mr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FinPick SIP Live</title>
+<meta name="description" content="मोफत मराठी LIVE: SIP म्हणजे काय, दर महिन्याला किती रक्कम आणि किती वर्षं. रविवारी सकाळी 11 वा., निखिल गौड यांच्यासोबत.">
+<link rel="icon" href="https://finpick.in/assets/favicona.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;600;700&family=Tiro+Devanagari+Marathi&display=swap" media="print" onload="this.media='all'">
+<style>
+:root {
+  --bg: #FBF8F3;
+  --surface: #FFFFFF;
+  --ink: #1E2A3A;
+  --muted: #566273;
+  --line: #E4DDD2;
+  --navy: #14213D;
+  --navy-ink: #F4EFE6;
+  --navy-muted: #C9D6E8;
+  --orange: #E8742A;
+  --orange-text: #A84A12;
+  --blue: #1F5FA8;
+  --error: #B42318;
+  --ok: #1E7A46;
+  --display: 'Tiro Devanagari Marathi', Georgia, serif;
+  --body: 'Mukta', 'Noto Sans Devanagari', Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1729; --surface: #18233D; --ink: #EDE8DF; --muted: #A9B4C4; --line: #2A3858;
+    --navy: #0A1122; --navy-ink: #F4EFE6; --navy-muted: #B7C5DA;
+    --orange: #F08A45; --orange-text: #F2A365; --blue: #7FB0EA; --error: #FF8A80; --ok: #6FD39B;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+.pop { position: fixed; inset: 0; z-index: 100; display: flex; align-items: flex-end; justify-content: center; background: rgba(8,13,28,.7); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); animation: popFade .25s ease; }
+.pop-card { position: relative; width: 100%; max-width: 460px; max-height: 94vh; overflow-y: auto; background: var(--surface); color: var(--ink); border-radius: 22px 22px 0 0; box-shadow: 0 -12px 48px rgba(0,0,0,.35); animation: popUp .4s cubic-bezier(.2,.9,.3,1.15); }
+@media (min-width: 640px) { .pop { align-items: center; } .pop-card { border-radius: 22px; } }
+.pop-head { position: relative; overflow: hidden; color: #F4EFE6; padding: 18px 18px 16px; background: radial-gradient(120% 90% at 100% 0%, rgba(232,116,42,.45) 0%, rgba(232,116,42,0) 55%), linear-gradient(160deg, #1B2D52 0%, #0E1830 100%); }
+.pop-x { position: absolute; top: 8px; right: 8px; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(255,255,255,.12); color: #fff; font-size: 24px; line-height: 1; cursor: pointer; }
+.pop-host { display: flex; align-items: center; gap: 12px; padding-right: 40px; }
+.pop-host img { width: 54px; height: 54px; border-radius: 50%; object-fit: cover; border: 3px solid #F08A45; flex: none; background: #22355E; }
+.pop-host b { display: block; font: 700 17px/1.25 var(--body); }
+.pop-host span { display: block; font: 500 13.5px/1.35 var(--body); color: #C9D6E8; }
+.pop-live { display: flex; align-items: center; gap: 7px; margin: 14px 0 8px; font: 600 13.5px/1 var(--body); color: #FFD9BF; letter-spacing: .02em; }
+.pop-live .dot { width: 9px; height: 9px; border-radius: 50%; background: #FF4D45; box-shadow: 0 0 0 0 rgba(255,77,69,.6); animation: popPulse 1.4s infinite; }
+.pop-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.pop-tiles div { text-align: center; background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.14); border-radius: 12px; padding: 8px 4px 7px; }
+.pop-tiles b { display: block; font: 700 25px/1.05 var(--body); color: #fff; font-variant-numeric: tabular-nums; }
+.pop-tiles small { display: block; margin-top: 3px; font: 500 12px/1 var(--body); color: #C9D6E8; }
+.pop-body { padding: 16px 18px calc(18px + env(safe-area-inset-bottom)); }
+.pop-prog { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font: 600 13px/1 var(--body); color: var(--muted); }
+.pop-prog .bar { flex: 1; height: 6px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.pop-prog .bar i { display: block; height: 100%; width: 50%; border-radius: 99px; background: linear-gradient(90deg, #E8742A, #F5A25F); transition: width .45s ease; }
+.pop h2 { font: 700 22px/1.32 var(--body); margin: 0 0 14px; }
+.pop-opts { display: grid; gap: 10px; }
+.pop-opts button { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; font: 600 16.5px/1.3 var(--body); color: var(--ink); background: var(--bg); border: 1.5px solid var(--line); border-radius: 14px; padding: 10px 12px; min-height: 58px; cursor: pointer; transition: transform .15s, border-color .15s, box-shadow .15s; }
+.pop-opts button .ic { flex: none; width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; font-size: 19px; background: rgba(31,95,168,.12); }
+.pop-opts button .tx { flex: 1; }
+.pop-opts button .ch { flex: none; color: var(--orange-text); font-size: 20px; transition: transform .15s; }
+.pop-opts button:hover, .pop-opts button:focus-visible { border-color: var(--orange); box-shadow: 0 6px 18px rgba(232,116,42,.18); transform: translateY(-2px); outline: none; }
+.pop-opts button:hover .ch { transform: translateX(3px); }
+.pop-opts button.picked { border-color: var(--orange); background: rgba(232,116,42,.12); }
+.pop-bonus { display: flex; gap: 10px; align-items: center; margin-top: 14px; padding: 10px 12px; border-radius: 12px; border: 1.5px dashed rgba(232,116,42,.6); background: rgba(232,116,42,.07); font: 600 14.5px/1.35 var(--body); }
+.pop-bonus .gift { font-size: 22px; animation: popWiggle 2.4s ease-in-out infinite; }
+.pop-insight { display: flex; gap: 10px; font: 600 16px/1.45 var(--body); background: rgba(31,95,168,.10); border-radius: 12px; padding: 12px 14px; margin: 0; }
+.pop-insight::before { content: "💡"; flex: none; font-size: 18px; }
+.pop-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 2px; }
+.pop-chips span { font: 600 13px/1 var(--body); color: var(--ok); background: rgba(30,122,70,.10); border-radius: 99px; padding: 7px 10px; }
+.pop .field { margin-top: 10px; }
+.card-head { margin: -28px -28px 20px; padding: 18px 20px 16px; border-radius: 14px 14px 0 0; color: #F4EFE6; background: radial-gradient(120% 90% at 100% 0%, rgba(232,116,42,.45) 0%, rgba(232,116,42,0) 55%), linear-gradient(160deg, #1B2D52 0%, #0E1830 100%); }
+.card-head .pop-host { padding-right: 0; }
+@media (max-width: 420px) { .card-head { margin: -22px -18px 18px; padding: 16px; } }
+@media (min-width: 900px) {
+  .pop-card { max-width: 540px; }
+  .pop-head { padding: 22px 26px 20px; }
+  .pop-body { padding: 20px 26px 24px; }
+  .pop h2 { font-size: 25px; }
+  .pop-opts { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .pop-opts button { flex-direction: column; align-items: flex-start; min-height: 112px; padding: 14px; font-size: 17px; }
+  .pop-opts button .ch { display: none; }
+  .pop-tiles b { font-size: 30px; }
+}
+.pop-card.s2 .pop-head { padding: 12px 16px 12px; }
+.pop-card.s2 .pop-host img { width: 40px; height: 40px; border-width: 2px; }
+.pop-card.s2 .pop-host span { display: none; }
+.pop-card.s2 .pop-live { margin: 8px 0 6px; }
+.pop-card.s2 .pop-tiles div { padding: 5px 2px 4px; border-radius: 9px; }
+.pop-card.s2 .pop-tiles b { font-size: 18px; }
+.pop-card.s2 .pop-tiles small { font-size: 11px; }
+.pop-card.s2 .pop-insight { font-size: 15px; padding: 10px 12px; }
+.pop details.more { display: none; }
+.pop #submitBtn { position: relative; overflow: hidden; }
+.pop #submitBtn::after { content: ""; position: absolute; top: 0; left: -60%; width: 40%; height: 100%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.45), transparent); animation: popShine 2.6s ease-in-out infinite; }
+.confetti { position: fixed; top: -12px; width: 9px; height: 14px; z-index: 120; pointer-events: none; border-radius: 2px; animation: confFall linear forwards; }
+@keyframes popFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popUp { from { transform: translateY(48px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes popPulse { 0% { box-shadow: 0 0 0 0 rgba(255,77,69,.6); } 70% { box-shadow: 0 0 0 9px rgba(255,77,69,0); } 100% { box-shadow: 0 0 0 0 rgba(255,77,69,0); } }
+@keyframes popShine { 0%, 55% { left: -60%; } 100% { left: 130%; } }
+@keyframes popWiggle { 0%, 80%, 100% { transform: rotate(0); } 85% { transform: rotate(-12deg); } 90% { transform: rotate(10deg); } 95% { transform: rotate(-6deg); } }
+@keyframes confFall { to { transform: translateY(105vh) rotate(720deg); opacity: .2; } }
+@media (prefers-reduced-motion: reduce) { .pop, .pop-card, .pop-live .dot, .pop-bonus .gift, .pop #submitBtn::after { animation: none; } .confetti { display: none; } }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 18px; line-height: 1.55; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2 { font-family: var(--display); font-weight: 400; text-wrap: balance; line-height: 1.25; margin: 0; }
+p { margin: 0; }
+.eyebrow { font-size: 14px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange-text); }
+.brand { background: var(--navy); border-top: 4px solid var(--orange); }
+.brand .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 14px; }
+.logo { font-family: var(--body); font-weight: 700; font-size: 24px; letter-spacing: -0.01em; text-decoration: none; }
+.logo .fin { color: #F7931E; } .logo .pick { color: #6FA8F0; }
+.topnav { display: flex; gap: 18px; flex-wrap: wrap; justify-content: flex-end; }
+.topnav a { color: var(--navy-muted); text-decoration: none; font-size: 15px; }
+.topnav a:hover { color: #FFFFFF; }
+@media (max-width: 520px) { .topnav a:not(:last-child) { display: none; } }
+.hero { background: var(--navy); color: var(--navy-ink); }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 48px; padding-block: 48px 64px; align-items: start; }
+.hero .eyebrow { color: #F2A365; }
+.hero h1 { font-size: clamp(34px, 5vw, 54px); margin-top: 12px; color: var(--navy-ink); }
+.hero .sub { font-size: 21px; color: var(--navy-muted); margin-top: 16px; max-width: 34ch; }
+.when { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.chip { display: inline-flex; gap: 8px; align-items: baseline; border: 1px solid #33456E; border-radius: 999px; padding: 6px 16px; font-size: 17px; color: var(--navy-ink); }
+.chip b { color: #F2A365; font-weight: 600; }
+.gets { list-style: none; padding: 0; margin: 32px 0 0; display: grid; gap: 14px; max-width: 46ch; }
+.gets li { display: grid; grid-template-columns: 28px minmax(0,1fr); gap: 10px; color: var(--navy-muted); }
+.gets li::before { content: ""; width: 10px; height: 10px; margin-top: 9px; background: #F2A365; border-radius: 2px; transform: rotate(45deg); }
+.gets b { color: var(--navy-ink); font-weight: 600; }
+.card { background: var(--surface); color: var(--ink); border-radius: 14px; padding: 28px; box-shadow: 0 18px 40px rgba(5, 10, 25, 0.35); }
+.card h2 { font-size: 26px; }
+.card .lead { color: var(--muted); font-size: 16px; margin-top: 6px; }
+form { display: grid; gap: 16px; margin-top: 20px; }
+.field { display: grid; gap: 6px; min-width: 0; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+label { font-weight: 600; font-size: 16px; }
+label .en { font-weight: 400; color: var(--muted); font-size: 14px; }
+input[type=text], input[type=tel], input[type=email], select { font: inherit; font-size: 17px; width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); }
+input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+.err { color: var(--error); font-size: 14px; }
+.consent { display: grid; grid-template-columns: 22px minmax(0,1fr); gap: 10px; font-size: 14px; color: var(--muted); align-items: start; }
+.consent input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--orange); }
+button.primary { font: inherit; font-weight: 700; font-size: 19px; border: 0; border-radius: 10px; padding: 14px 18px; cursor: pointer; background: var(--orange); color: #1A1206; }
+button.primary:hover { filter: brightness(1.05); }
+button.primary[disabled] { opacity: 0.6; cursor: progress; }
+.fine { font-size: 13px; color: var(--muted); }
+.done { display: grid; gap: 14px; }
+.done h2 { color: var(--ok); }
+.wa { display: inline-flex; justify-content: center; text-decoration: none; font-weight: 700; font-size: 18px; border-radius: 10px; padding: 13px 18px; background: #1E7A46; color: #FFFFFF; }
+.num { font-variant-numeric: tabular-nums; font-weight: 600; user-select: all; }
+section.block .wrap { padding-block: 56px; }
+section.block + section.block .wrap { padding-top: 0; }
+.block h2 { font-size: clamp(28px, 3.6vw, 38px); margin-top: 8px; }
+.points { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 28px; }
+.point { border-top: 3px solid var(--orange); padding-top: 16px; }
+.point h3 { margin: 0 0 6px; font-size: 21px; }
+.point p { color: var(--muted); }
+.host { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 40px; align-items: start; border-top: 1px solid var(--line); padding-top: 40px; }
+.host p { color: var(--muted); max-width: 60ch; }
+.host p + p { margin-top: 12px; }
+details { border-bottom: 1px solid var(--line); padding-block: 14px; }
+details summary { cursor: pointer; font-weight: 600; font-size: 18px; }
+details p { color: var(--muted); margin-top: 8px; max-width: 65ch; }
+.faq { margin-top: 20px; border-top: 1px solid var(--line); }
+footer { border-top: 1px solid var(--line); }
+footer .wrap { padding-block: 28px 40px; font-size: 13px; color: var(--muted); display: grid; gap: 6px; }
+@media (max-width: 860px) { .hero .wrap { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-block: 32px 40px; } .points { grid-template-columns: minmax(0, 1fr); } .host { grid-template-columns: minmax(0, 1fr); gap: 16px; } }
+@media (max-width: 420px) { .row2 { grid-template-columns: minmax(0, 1fr); } .card { padding: 22px 18px; } }
+details.more { margin: 4px 0 14px; border: 1px dashed var(--line); border-radius: 10px; padding: 10px 14px; }
+details.more summary { cursor: pointer; font-size: 15px; color: var(--muted); }
+details.more[open] summary { margin-bottom: 10px; }
+.stickycta { display: none; }
+@media (max-width: 860px) {
+  .stickycta { display: block; position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 50; text-align: center; background: var(--orange); color: #1A1206; font-weight: 700; font-size: 18px; padding: 14px 16px; border-radius: 12px; text-decoration: none; box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+  body { padding-bottom: 84px; }
+  body.cta-off .stickycta { display: none; }
+}
+</style>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1563224404938518&ev=PageView&noscript=1"></noscript>
+</head>
+<body>
+<header class="brand">
+  <div class="wrap">
+    <a class="logo" href="https://insure.finpick.in/" aria-label="FinPick Insurance home"><span class="fin">Fin</span><span class="pick">Pick</span></a>
+    <nav class="topnav" aria-label="FinPick">
+      <a href="https://insure.finpick.in/health/">Health Insurance</a>
+      <a href="https://insure.finpick.in/term/">Term Insurance</a>
+      <a href="https://insurance.finpick.in/customer/login">Buy Online</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">FinPick SIP Live · मोफत · मराठीत</p>
+        <h1>SIP सुरू करायची आहे, पण सुरुवात कुठून करायची ते कळत नाही?</h1>
+        <p class="sub">फक्त 60 मिनिटांत सोप्या मराठीत समजून घ्या: <b>SIP म्हणजे काय, दर महिन्याला किती रक्कम आणि किती वर्षं</b>. तुमचा प्रश्न LIVE मध्ये थेट विचारा, उत्तर लगेच.</p>
+        <div class="when">
+          <span class="chip"><b>रविवार</b> <span id="webinarDateText">29 नोव्हेंबर 2026</span></span>
+          <span class="chip"><b>वेळ</b> सकाळी 11:00 ते 12:00</span>
+          <span class="chip"><b>कुठे</b> Online (FinPick Live)</span>
+        </div>
+        <ul class="gets">
+          <li><span><b>SIP ची मूळ कल्पना:</b> दर महिन्याला थोडी रक्कम, शिस्त आणि वेळ यांचं गणित</span></li>
+          <li><span><b>रक्कम कशी ठरवायची:</b> खर्च, emergency fund आणि तुमचं ध्येय यांचा सोपा हिशोब</span></li>
+          <li><span><b>Risk समजून घ्या:</b> market वर-खाली होतं, तेव्हा काय करायचं आणि काय टाळायचं</span></li>
+          <li><span><b>Live demo:</b> FinPick app मधून SIP online कशी सुरू करायची, ते पाऊल-पाऊल</span></li>
+        </ul>
+      </div>
+      <div class="card" id="register">
+        <div class="card-head">
+          <div class="pop-host">
+            <img src="nikhil-avatar.jpg" alt="निखिल गौड" width="54" height="54">
+            <div><b>निखिल गौड यांच्यासोबत मोफत LIVE</b><span>रविवारी सकाळी 11 वा. · मराठीत · Online</span></div>
+          </div>
+          <div class="pop-live"><span class="dot"></span> LIVE सुरू व्हायला उरले</div>
+          <div class="pop-tiles">
+            <div><b data-cd="d">0</b><small>दिवस</small></div>
+            <div><b data-cd="h">00</b><small>तास</small></div>
+            <div><b data-cd="m">00</b><small>मिनिटं</small></div>
+            <div><b data-cd="s">00</b><small>सेकंद</small></div>
+          </div>
+        </div>
+        <div id="formView">
+          <h2>मोफत जागा राखून ठेवा</h2>
+          <p class="lead">फक्त नाव आणि WhatsApp नंबर. 20 सेकंद लागतील.</p>
+          <form id="regForm" novalidate>
+            <div class="field">
+              <label for="name">तुमचं नाव <span class="en">Name</span></label>
+              <input type="text" id="name" name="name" autocomplete="name" required>
+              <p class="err" id="nameErr" role="alert"></p>
+            </div>
+            <div class="field">
+              <label for="mobile">WhatsApp नंबर <span class="en">Join link इथे येईल</span></label>
+              <input type="tel" id="mobile" name="mobile" inputmode="numeric" autocomplete="tel-national" maxlength="10" placeholder="10 अंकी" required>
+              <p class="err" id="mobileErr" role="alert"></p>
+            </div>
+            <div class="field">
+              <label for="email">Email <span class="en">(optional) · reminders साठी</span></label>
+              <input type="email" id="email" name="email" autocomplete="email" inputmode="email" placeholder="tumche.nav@gmail.com">
+              <p class="err" id="emailErr" role="alert"></p>
+            </div>
+            <div class="field">
+              <label for="cover">सध्या तुमची SIP आहे का? <span class="en">Current SIP</span></label>
+              <select id="cover" name="cover" required>
+                <option value="">निवडा</option>
+                <option value="No SIP">नाही, सुरुवात करायची आहे</option>
+                <option value="SIP below 5k">हो, ₹5,000 पेक्षा कमी</option>
+                <option value="SIP 5k plus">हो, ₹5,000 किंवा जास्त</option>
+                <option value="SIP stopped">होती, पण बंद केली</option>
+              </select>
+              <p class="err" id="selErr" role="alert"></p>
+            </div>
+            <details class="more">
+              <summary>इतर माहिती <span class="en">(optional)</span></summary>
+              <div class="row2">
+                <div class="field">
+                  <label for="pincode">Pin code</label>
+                  <input type="text" id="pincode" name="pincode" inputmode="numeric" maxlength="6" placeholder="411045">
+                  <p class="err" id="pinErr" role="alert"></p>
+                </div>
+                <div class="field">
+                  <label for="family">कुटुंबात किती जण?</label>
+                  <select id="family" name="family">
+                    <option value="">निवडा</option>
+                    <option value="फक्त मी (Individual)">फक्त मी</option>
+                    <option value="2 members (Couple)">2 जण</option>
+                    <option value="3-4 members (Family)">3-4 जण</option>
+                    <option value="5+ members">5 किंवा जास्त (आई-वडिलांसह)</option>
+                  </select>
+                </div>
+              </div>
+            </details>
+            <p class="err" id="consentErr" role="alert"></p>
+            <button class="primary" type="submit" id="submitBtn">माझी मोफत जागा राखून ठेवा</button>
+            <p class="fine">बटण दाबून, webinar ची माहिती आणि reminders साठी FinPick ने मला WhatsApp, email, SMS किंवा call करावा, यास मी संमती देतो/देते. कधीही STOP लिहून थांबवता येईल. तुमची माहिती फक्त FinPick वापरेल, कोणालाही विकत नाही.</p>
+          </form>
+        </div>
+        <div id="doneView" class="done" hidden>
+          <h2>Registration झालं, <span id="doneName"></span>!</h2>
+          <p>Confirmation आणि join link तुमच्या WhatsApp वर (आणि email दिला असेल तर email वरही) पाठवत आहोत. रविवारी सकाळी 10:55 ला हाच link उघडा, कोणतंही app किंवा registration लागणार नाही.</p>
+          <div style="border:2px dashed #E8742A;border-radius:14px;padding:14px;margin:12px 0;text-align:center;background:#FFF7F0">
+            <div style="font-size:13px;font-weight:700;letter-spacing:.06em;color:#A84A12">तुमचा JOIN LINK · रविवारी सकाळी 10:55 ला उघडा</div>
+            <div style="font-size:22px;font-weight:800;color:#14213D;margin:6px 0 10px;word-break:break-all">insure.finpick.in/live</div>
+            <a class="wa" id="calLink" href="#" target="_blank" rel="noopener" style="background:#14213D;color:#fff;margin-bottom:8px">📅 Calendar मध्ये जोडा (reminder येईल)</a>
+            <a class="wa" id="copyLink" href="https://insure.finpick.in/live/" style="background:#E8742A;color:#1A1206">🔗 Link copy करा</a>
+          </div>
+          <a class="wa" href="https://play.google.com/store/apps/details?id=com.mfi.finpick&referrer=utm_source%3Dsip_done" target="_blank" rel="noopener" style="background:#0B4EA8;color:#fff;margin-bottom:8px">📲 FinPick App डाउनलोड करा (SIP, insurance एका ठिकाणी)</a>
+          <a class="wa" href="tel:+917887885889" style="background:#14213D;color:#fff">📞 काही अडचण? Call करा: 78878 85889</a>
+          <p class="fine">WhatsApp confirmation आणि reminders <span class="num">+91 82650 83354</span> या नंबरवरून येतील. हा नंबर save करा, म्हणजे link सहज दिसेल. काही प्रश्न असल्यास याच नंबरवर message करा.</p>
+          <a id="waLink" href="https://wa.me/918265083354" hidden></a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="block">
+    <div class="wrap">
+      <p class="eyebrow">हा webinar कोणासाठी</p>
+      <h2>यापैकी एक जरी गोष्ट तुम्हाला लागू होत असेल, तर नक्की या</h2>
+      <div class="points">
+        <div class="point"><h3>पगार येतो, पण बचत उरत नाही</h3><p>दर महिन्याला थोडं बाजूला कसं काढायचं, याची सोपी पद्धत हवी आहे.</p></div>
+        <div class="point"><h3>SIP सुरू केली, पण थांबवली</h3><p>Market पडलं तेव्हा भीती वाटली आणि SIP बंद केली.</p></div>
+        <div class="point"><h3>किती रक्कम, किती वर्षं: गोंधळ</h3><p>Goal साठी किती लागेल आणि दर महिन्याला किती ठेवावं, हे स्पष्ट नाही.</p></div>
+      </div>
+    </div>
+  </section>
+  <section class="block">
+    <div class="wrap">
+      <div class="host">
+        <div>
+          <p class="eyebrow">सादरकर्ते</p>
+          <h2>निखिल गौड</h2>
+          <p style="margin-top:6px">Founder, FinPick Financial Architecture &amp; Advisory Services</p>
+        </div>
+        <div>
+          <p>FinPick महाराष्ट्रातील कुटुंबांसाठी insurance आणि mutual funds चं काम करते (AMFI-registered Mutual Fund Distributor, ARN-121216; insurance SIBL मार्फत). SIP Live हे शैक्षणिक सत्र आहे: SIP कशी काम करते आणि स्वतःसाठी योग्य प्रश्न कोणते, ते सोप्या मराठीत शिकवतो. कोणत्याही scheme ची शिफारस केली जात नाही.</p>
+          <p>रविवारी सकाळी 11 वाजता, एक तास, पैशाचा एक विषय, सोप्या मराठीत. काहीही विकायचं नाही, फक्त समजावून सांगायचं.</p>
+          <div class="faq">
+            <details><summary>हे खरंच मोफत आहे का?</summary><p>हो, Live पूर्णपणे मोफत आहे. कोणतीही SIP किंवा policy घेणं आवश्यक नाही.</p></details>
+            <details><summary>Return किती मिळेल हे सांगणार का?</summary><p>नाही. Mutual fund मध्ये return ची हमी नसते. आम्ही फक्त SIP कशी काम करते आणि risk कसा समजावा, हे शिकवतो.</p></details>
+            <details><summary>मला webinar ला येता आलं नाही तर?</summary><p>पुढच्या सत्राचं निमंत्रण तुम्हाला WhatsApp वर मिळेल.</p></details>
+            <details><summary>Join करायला काय लागेल?</summary><p>फक्त mobile किंवा laptop आणि internet. Link WhatsApp वर येईल, कोणतंही app install करायची गरज नाही.</p></details>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<a class="stickycta" href="#register" id="stickyCta">मोफत जागा राखून ठेवा · 20 सेकंद</a>
+<div class="pop" id="pop" hidden role="dialog" aria-modal="true" aria-labelledby="popQ">
+  <div class="pop-card">
+    <div class="pop-head">
+      <button type="button" class="pop-x" id="popX" aria-label="बंद करा">×</button>
+      <div class="pop-host">
+        <img src="nikhil-avatar.jpg" alt="निखिल गौड" width="54" height="54" loading="lazy">
+        <div><b>निखिल गौड यांच्यासोबत मोफत LIVE</b><span>FinPick SIP Live · रविवारी सकाळी 11 वा.</span></div>
+      </div>
+      <div class="pop-live"><span class="dot"></span> LIVE सुरू व्हायला उरले</div>
+      <div class="pop-tiles" aria-live="off">
+        <div><b id="popD" data-cd="d">0</b><small>दिवस</small></div>
+        <div><b id="popH" data-cd="h">00</b><small>तास</small></div>
+        <div><b id="popM" data-cd="m">00</b><small>मिनिटं</small></div>
+        <div><b id="popS" data-cd="s">00</b><small>सेकंद</small></div>
+      </div>
+    </div>
+    <div class="pop-body">
+      <div class="pop-prog"><span id="popStepTxt">पायरी 1 / 2</span><span class="bar"><i id="popBar"></i></span></div>
+      <div id="popStep1">
+        <h2 id="popQ">10 सेकंदांचा quick check: सध्या तुमची SIP आहे का?</h2>
+        <div class="pop-opts">
+          <button type="button" data-v="No SIP"><span class="ic">🌱</span><span class="tx">नाही, सुरुवात करायची आहे</span><span class="ch">›</span></button>
+          <button type="button" data-v="SIP below 5k"><span class="ic">📈</span><span class="tx">हो, ₹5,000 पेक्षा कमी</span><span class="ch">›</span></button>
+          <button type="button" data-v="SIP 5k plus"><span class="ic">🎯</span><span class="tx">हो, ₹5,000 किंवा जास्त</span><span class="ch">›</span></button>
+          <button type="button" data-v="SIP stopped"><span class="ic">⏸️</span><span class="tx">होती, पण बंद केली</span><span class="ch">›</span></button>
+        </div>
+        <div class="pop-bonus"><span class="gift">📲</span><span>Live मध्ये <b>FinPick app मधून SIP सुरू करण्याचा demo</b></span></div>
+      </div>
+      <div id="popStep2" hidden>
+        <p class="pop-insight" id="popInsight"></p>
+        <div class="pop-chips"><span>✓ पूर्णपणे मोफत</span><span>✓ 60 मिनिटं, मराठीत</span><span>✓ App नको, फक्त link</span></div>
+        <div id="popFormSlot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+  <div class="wrap">
+    <p>FinPick · AMFI-registered Mutual Fund Distributor, ARN 121216. Insurance through SIBL, IRDAI Licence No. DB 947/2022/830.</p>
+    <p>Insurance is the subject matter of solicitation. Mutual fund investments are subject to market risks; read all scheme related documents carefully.</p>
+    <p>Call: <span class="num">+91 78878 85889</span> · WhatsApp: <span class="num">+91 82650 83354</span> · <a href="https://finpick.in" style="color:inherit">finpick.in</a></p>
+  </div>
+</footer>
+<script>
+var ZOHO_ENDPOINT = "https://project-rainfall-60087439549.development.catalystserverless.in/server/lp_lead/";
+var META_PIXEL_ID = "1563224404938518";
+var META_PIXEL_ID_2 = "1565562343935028";   // ad account 779169349379154 ("Health Insurance" dataset) - used for registration optimisation
+var FIRST_WEBINAR = "2026-12-13"; // SIP Live: 2nd Sunday of each month, 11 AM-12 PM IST
+var WEBINAR_DATE = (function () {
+  var IST = 5.5 * 3600 * 1000, nowIst = new Date(Date.now() + IST);
+  var today = Date.UTC(nowIst.getUTCFullYear(), nowIst.getUTCMonth(), nowIst.getUTCDate());
+  var y = nowIst.getUTCFullYear(), mo = nowIst.getUTCMonth();
+  for (var k = 0; k < 3; k++) {
+    var d1 = new Date(Date.UTC(y, mo + k, 1)), add = (7 - d1.getUTCDay()) % 7;
+    var sec = Date.UTC(d1.getUTCFullYear(), d1.getUTCMonth(), 1 + add + 7); // 2nd Sunday
+    if (sec > today || (sec === today && nowIst.getUTCHours() < 12)) {
+      var iso = new Date(sec).toISOString().slice(0, 10);
+      return iso < FIRST_WEBINAR ? FIRST_WEBINAR : iso;
+    }
+  }
+  return FIRST_WEBINAR;
+})();
+(function () {
+  var m = ["जानेवारी","फेब्रुवारी","मार्च","एप्रिल","मे","जून","जुलै","ऑगस्ट","सप्टेंबर","ऑक्टोबर","नोव्हेंबर","डिसेंबर"];
+  var p = WEBINAR_DATE.split("-"), el = document.getElementById("webinarDateText");
+  if (el) el.textContent = parseInt(p[2], 10) + " " + m[parseInt(p[1], 10) - 1] + " " + p[0];
+})();
+(function () {
+  var p = WEBINAR_DATE.replace(/-/g, ""), cal = document.getElementById("calLink"), cp = document.getElementById("copyLink");
+  if (cal) cal.href = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + encodeURIComponent("FinPick SIP Live (मोफत मराठी)") +
+    "&dates=" + p + "T052500Z/" + p + "T063000Z&ctz=Asia/Kolkata&location=" + encodeURIComponent("https://insure.finpick.in/live/") +
+    "&details=" + encodeURIComponent("Join link: https://insure.finpick.in/live/\nसकाळी 10:55 ला उघडा. कोणतंही app लागणार नाही.\n- FinPick");
+  if (cp) cp.addEventListener("click", function (e) {
+    e.preventDefault();
+    var done = function () { cp.textContent = "✅ Link copy झाला"; };
+    try { navigator.clipboard.writeText("https://insure.finpick.in/live/").then(done, function () { location.href = cp.href; }); } catch (err) { location.href = cp.href; }
+  });
+})();
+var WA_NUMBER     = "918265083354";
+(function () {
+  if (META_PIXEL_ID) {
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    try { fbq('init', META_PIXEL_ID); if (META_PIXEL_ID_2) fbq('init', META_PIXEL_ID_2); fbq('track', 'PageView'); } catch (e) {}
+  }
+  var params = new URLSearchParams(location.search);
+  function utm(k) { return params.get(k) || ""; }
+  function source() {
+    var s = (utm("utm_source") || "").toLowerCase();
+    if (s.indexOf("ig") > -1 || s.indexOf("insta") > -1) return { web: "Meta Ad", ad: "Instagram Ad" };
+    if (s.indexOf("fb") > -1 || s.indexOf("facebook") > -1 || params.get("fbclid")) return { web: "Meta Ad", ad: "Facebook Ad" };
+    if (s.indexOf("reel") > -1) return { web: "Reel", ad: "Instagram Ad" };
+    if (s.indexOf("whatsapp") > -1 || s.indexOf("client") > -1) return { web: "Existing Client", ad: "WhatsApp" };
+    if (s.indexOf("ref") > -1) return { web: "Referral", ad: "Referral" };
+    return { web: "Website", ad: "Website" };
+  }
+  function cookie(n) { try { var m = document.cookie.match(new RegExp("(?:^|; )" + n + "=([^;]*)")); return m ? decodeURIComponent(m[1]) : ""; } catch (e) { return ""; } }
+  var EVENT_ID = "slr_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 10);
+  var form = document.getElementById("regForm");
+  var el = function (id) { return document.getElementById(id); };
+  try {
+    var card = el("register");
+    if ("IntersectionObserver" in window && card) {
+      new IntersectionObserver(function (en) { document.body.classList.toggle("cta-off", en[0].isIntersecting); }, { threshold: 0.15 }).observe(card);
+    }
+    el("stickyCta").addEventListener("click", function () { setTimeout(function () { try { el("name").focus({ preventScroll: true }); } catch (e) {} }, 450); });
+  } catch (e) {}
+  el("mobile").addEventListener("input", function () { this.value = this.value.replace(/\D/g, "").slice(0, 10); });
+  el("pincode").addEventListener("input", function () { this.value = this.value.replace(/\D/g, "").slice(0, 6); });
+  function validate() {
+    var ok = true;
+    ["nameErr","emailErr","mobileErr","pinErr","selErr","consentErr"].forEach(function (id) { el(id).textContent = ""; });
+    var more = document.querySelector("details.more");
+    if (el("name").value.trim().length < 2) { el("nameErr").textContent = "कृपया तुमचं नाव लिहा."; ok = false; }
+    if (!/^[6-9]\d{9}$/.test(el("mobile").value)) { el("mobileErr").textContent = "10 अंकी WhatsApp नंबर लिहा (6, 7, 8 किंवा 9 ने सुरू होणारा)."; ok = false; }
+    if (!el("cover").value) { el("selErr").textContent = "SIP बद्दल एक पर्याय निवडा."; ok = false; }
+    var em = el("email").value.trim();
+    if (em && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(em)) { el("emailErr").textContent = "बरोबर email लिहा, किंवा रिकामं ठेवा."; ok = false; }
+    var pc = el("pincode").value;
+    if (pc && !/^\d{6}$/.test(pc)) { el("pinErr").textContent = "6 अंकी pin code लिहा, किंवा रिकामं ठेवा."; ok = false; if (more) more.open = true; }
+    return ok;
+  }
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (!validate()) return;
+    var btn = el("submitBtn");
+    btn.disabled = true; btn.textContent = "नोंद करत आहोत…";
+    var pin = el("pincode").value;
+    var src = source();
+    var inPune = !pin || /^41[0-2]\d{3}$/.test(pin);
+    var name = el("name").value.trim();
+    var finish = function () {
+      try { if (window.fbq) fbq('track', 'CompleteRegistration', { content_name: 'SIP Live ' + WEBINAR_DATE }, { eventID: EVENT_ID }); } catch (err) {}
+      var msg = "LIVE\nनमस्कार, मी " + name + ". FinPick SIP Live (" + WEBINAR_DATE + ") साठी registration केलं आहे. Join link पाठवा.";
+      el("waLink").href = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(msg);
+      el("doneName").textContent = name.split(" ")[0];
+      el("formView").hidden = true;
+      el("doneView").hidden = false;
+    };
+    var body = new URLSearchParams({
+      category: "Webinar", coverage_type: "Mutual Fund", name: name, email: el("email").value.trim().toLowerCase(), mobile: el("mobile").value,
+      city: inPune ? "Pune" : "Other", members: el("family").value || "Not given", existing_cover: el("cover").value,
+      consent: "yes", website: "",
+      utm_source: utm("utm_source") || src.web, utm_medium: utm("utm_medium"),
+      utm_campaign: utm("utm_campaign") || ("sip_live_" + WEBINAR_DATE),
+      utm_content: utm("utm_content"), utm_term: utm("utm_term"),
+      fbclid: params.get("fbclid") || "", gclid: params.get("gclid") || "",
+      page: "sip", site: location.hostname, ref: "sip_live", referrer: document.referrer,
+      submitted_at: new Date().toISOString(), sip_live_date: WEBINAR_DATE, webinar_source: src.web, pincode: pin,
+      event_id: EVENT_ID, fbp: cookie("_fbp"), fbc: cookie("_fbc"), page_url: location.href.split("#")[0]
+    });
+    var ctrl = ("AbortController" in window) ? new AbortController() : null;
+    var t = setTimeout(function () { if (ctrl) ctrl.abort(); }, 8000);
+    fetch(ZOHO_ENDPOINT, { method: "POST", mode: "no-cors", body: body, signal: ctrl ? ctrl.signal : undefined })
+      .catch(function () {})
+      .then(function () { clearTimeout(t); finish(); });
+  });
+
+  /* ---------- registration pop-up: 1 quick question, then the same form ---------- */
+  try {
+    var pop = el("pop"), shown = false, timer = null, maxScroll = 0;
+    var KEY = "sip_pop_seen";
+    var seen = function () { try { return sessionStorage.getItem(KEY) === "1"; } catch (e) { return false; } };
+    var markSeen = function () { try { sessionStorage.setItem(KEY, "1"); } catch (e) {} };
+    var busy = function () {
+      var a = document.activeElement;
+      return !el("doneView").hidden || (a && form.contains(a)) || el("name").value.trim() || el("mobile").value;
+    };
+    var target = (function () { var p = WEBINAR_DATE.split("-"); return Date.UTC(+p[0], +p[1] - 1, +p[2], 5, 30); })(); // 11 AM IST
+    var tick = function () {
+      var s = Math.max(0, Math.floor((target - Date.now()) / 1000)), d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+      var z = function (n) { return (n < 10 ? "0" : "") + n; };
+      var v = { d: d, h: z(h), m: z(m), s: z(sec) };
+      Array.prototype.forEach.call(document.querySelectorAll("[data-cd]"), function (n) { n.textContent = v[n.getAttribute("data-cd")]; });
+    };
+    tick(); timer = setInterval(tick, 1000);
+    var insight = {
+      "No SIP": "छान, सुरुवात करण्याची योग्य वेळ आत्ताच आहे. रविवारी दर महिन्याची रक्कम कशी ठरवायची ते सोप्या मराठीत पाहू.",
+      "SIP below 5k": "सुरुवात झाली आहे, हे महत्त्वाचं. रविवारी पाहू: ही रक्कम तुमच्या ध्येयासाठी पुरेशी आहे का, आणि पुढे कशी वाढवायची.",
+      "SIP 5k plus": "छान! आता पुढचा प्रश्न: तुमची SIP कोणत्या ध्येयासाठी आहे आणि market पडलं तर काय करायचं. रविवारी हेच पाहू.",
+      "SIP stopped": "अनेकांची SIP market पडल्यावर थांबते. रविवारी पाहू: असं का होतं आणि पुन्हा सुरुवात करताना काय लक्षात ठेवायचं."
+    };
+    var open = function () {
+      if (shown || seen() || busy()) return;
+      shown = true; markSeen();
+      el("popStep1").hidden = false; el("popStep2").hidden = true;
+      pop.querySelector(".pop-card").classList.remove("s2");
+      el("popStepTxt").textContent = "पायरी 1 / 2"; el("popBar").style.width = "50%";
+      pop.hidden = false; tick();
+      try { if (window.fbq) fbq('trackCustom', 'SIP_PopupOpen'); } catch (e) {}
+      try { pop.querySelector(".pop-opts button").focus({ preventScroll: true }); } catch (e) {}
+    };
+    var close = function () {
+      pop.hidden = true;
+      if (el("popFormSlot").contains(form)) el("formView").appendChild(form);
+      try { el("cover").closest(".field").hidden = false; } catch (e) {}
+    };
+    Array.prototype.forEach.call(pop.querySelectorAll(".pop-opts button"), function (b) {
+      b.addEventListener("click", function () {
+        var v = b.getAttribute("data-v");
+        el("cover").value = v;
+        el("popInsight").textContent = insight[v] || "";
+        el("popFormSlot").appendChild(form);
+        el("submitBtn").textContent = "माझी मोफत जागा पक्की करा";
+        b.classList.add("picked");
+        el("popStepTxt").textContent = "पायरी 2 / 2 · शेवटची"; el("popBar").style.width = "100%";
+        el("popStep1").hidden = true; el("popStep2").hidden = false;
+        pop.querySelector(".pop-card").classList.add("s2");
+        try { el("cover").closest(".field").hidden = true; } catch (e) {}
+        try { if (window.fbq) fbq('trackCustom', 'SIP_PopupAnswer', { sip: v }); } catch (e) {}
+        setTimeout(function () { try { el("name").focus(); } catch (e) {} }, 60);
+      });
+    });
+    el("popX").addEventListener("click", close);
+    pop.addEventListener("click", function (e) { if (e.target === pop) close(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !pop.hidden) close(); });
+    var confetti = function () {
+      try {
+        if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        var cols = ["#E8742A", "#F5A25F", "#1F5FA8", "#7FB0EA", "#1E7A46", "#FFD24D"];
+        for (var i = 0; i < 70; i++) {
+          var c = document.createElement("i"); c.className = "confetti";
+          c.style.left = Math.random() * 100 + "vw"; c.style.background = cols[i % cols.length];
+          c.style.animationDuration = (1.8 + Math.random() * 1.8) + "s"; c.style.animationDelay = (Math.random() * .5) + "s";
+          c.style.transform = "rotate(" + Math.random() * 360 + "deg)";
+          document.body.appendChild(c); setTimeout(function (n) { return function () { n.remove(); }; }(c), 4500);
+        }
+      } catch (e) {}
+    };
+    new MutationObserver(function () {
+      if (!el("doneView").hidden) confetti();
+      if (!el("doneView").hidden && !pop.hidden) { close(); try { el("register").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }
+    }).observe(el("doneView"), { attributes: true, attributeFilter: ["hidden"] });
+    if (!seen() && !/[?&]nopop=1/.test(location.search)) {
+      setTimeout(open, 9000);
+      window.addEventListener("scroll", function () {
+        var y = window.scrollY, h = document.documentElement.scrollHeight - window.innerHeight;
+        if (h > 0 && y / h > 0.45) open();
+        if (y > maxScroll) maxScroll = y; else if (maxScroll > 700 && maxScroll - y > 350) open(); // scrolling back up = leaving
+      }, { passive: true });
+      document.addEventListener("mouseout", function (e) { if (!e.relatedTarget && e.clientY <= 0) open(); }); // desktop exit intent
+    }
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>

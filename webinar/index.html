@@ -288,6 +288,7 @@ details.more[open] summary { margin-bottom: 10px; }
             <a class="wa" id="calLink" href="#" target="_blank" rel="noopener" style="background:#14213D;color:#fff;margin-bottom:8px">📅 Calendar मध्ये जोडा (reminder येईल)</a>
             <a class="wa" id="copyLink" href="https://insure.finpick.in/live/" style="background:#E8742A;color:#1A1206">🔗 Link copy करा</a>
           </div>
+          <a class="wa" id="shareFriends" href="#" target="_blank" rel="noopener" style="background:#1FA855;color:#fff;margin-bottom:8px">📤 मित्र-नातेवाईकांना पण बोलवा (WhatsApp)</a>
           <a class="wa" href="https://play.google.com/store/apps/details?id=com.mfi.finpick&referrer=utm_source%3Dwebinar_done" target="_blank" rel="noopener" style="background:#0B4EA8;color:#fff;margin-bottom:8px">📲 FinPick App डाउनलोड करा (SIP, insurance एका ठिकाणी)</a>
           <a class="wa" href="tel:+917887885889" style="background:#14213D;color:#fff">📞 काही अडचण? Call करा: 78878 85889</a>
           <p class="fine">WhatsApp confirmation आणि reminders <span class="num">+91 82650 83354</span> या नंबरवरून येतील. हा नंबर save करा, म्हणजे link सहज दिसेल. काही प्रश्न असल्यास याच नंबरवर message करा.</p>
@@ -462,9 +463,15 @@ var WA_NUMBER     = "918265083354";
     var inPune = !pin || /^41[0-2]\d{3}$/.test(pin);
     var name = el("name").value.trim();
     var finish = function () {
+      // Advanced matching: give Meta the registrant's email/phone (hashed by the pixel) so more registrations are matched and ads learn faster
+      try { if (window.fbq) { var am = { ph: '91' + el("mobile").value, fn: name.split(" ")[0].toLowerCase(), country: 'in' }; var emv = el("email").value.trim().toLowerCase(); if (emv) am.em = emv; if (pin) am.zp = pin; fbq('init', META_PIXEL_ID, am); if (META_PIXEL_ID_2) fbq('init', META_PIXEL_ID_2, am); } } catch (err) {}
       try { if (window.fbq) fbq('track', 'CompleteRegistration', { content_name: 'Sunday Live ' + WEBINAR_DATE }, { eventID: EVENT_ID }); } catch (err) {}
       var msg = "LIVE\nनमस्कार, मी " + name + ". FinPick Sunday Live (" + WEBINAR_DATE + ") साठी registration केलं आहे. Join link पाठवा.";
       el("waLink").href = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(msg);
+      try { var shareMsg = "नमस्कार! रविवारी सकाळी 11 वा. FinPick Sunday Live आहे: \"तुमची Health Policy खरंच पुरेशी आहे का?\"\nमोफत · मराठीत · 1 तास · Host: निखिल गौड\nमी नाव नोंदवलं, तुम्हीही नोंदवा 👇\nhttps://insure.finpick.in/webinar/?utm_source=share&utm_medium=friend&utm_campaign=done_share";
+        el("shareFriends").href = "https://wa.me/?text=" + encodeURIComponent(shareMsg);
+        el("shareFriends").onclick = function (ev) { if (navigator.share) { ev.preventDefault(); navigator.share({ title: "FinPick Sunday Live", text: shareMsg }).catch(function () {}); } try { if (window.fbq) fbq('trackCustom', 'SL_ShareFriends'); } catch (e) {} };
+      } catch (err) {}
       el("doneName").textContent = name.split(" ")[0];
       el("formView").hidden = true;
       el("doneView").hidden = false;

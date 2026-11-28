@@ -3,7 +3,7 @@
 <title>FinPick Sunday Live</title><meta name="robots" content="noindex">
 <link rel="icon" href="https://finpick.in/assets/favicona.png">
 <style>
-:root{--navy:#0E1830;--card:#14213D;--ink:#F4EFE6;--muted:#C9D6E8;--orange:#E8742A;--blue:#0B4EA8}
+:root{--navy:#0E1830;--card:#14213D;--ink:#F4EFE6;--muted:#C9D6E8;--orange:#E8742A;--blue:#0B4EA8;--amber:#F2A365}
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;background:var(--navy);color:var(--ink);font-family:Mukta,'Noto Sans Devanagari','Nirmala UI',Arial,sans-serif}
 header{background:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;box-shadow:0 2px 10px rgba(0,0,0,.25)}
@@ -14,15 +14,80 @@ main{max-width:1100px;margin:0 auto;padding:14px 12px 28px}
 h1{font-size:20px;line-height:1.35;margin:4px 2px 12px;font-weight:700}
 .player{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 .player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-@media (max-width:700px){.player{aspect-ratio:auto;height:52vh}}
+@media (max-width:700px){.player{aspect-ratio:auto;height:56vh}}
 .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
 .btn{flex:1 1 220px;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font-weight:700;font-size:16px;padding:13px 14px;border-radius:12px}
 .wa{background:#1FA855;color:#fff}.call{background:#E8742A;color:#fff}.app{background:#0B4EA8;color:#fff}.pdf{background:var(--card);color:var(--ink);border:1px solid #33456E}
 .tip{color:var(--muted);font-size:14px;margin:12px 2px 0;line-height:1.5}
-.tip a{color:#F2A365}
-.wait{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px;background:var(--card)}.wait[hidden]{display:none}.wt{font-size:20px;font-weight:700;margin:0 0 6px}.cd{font-size:40px;font-weight:700;color:#F2A365;letter-spacing:2px}.ws{color:var(--muted);font-size:15px;margin:8px 0 0}
+.tip a{color:var(--amber)}
 footer{color:#6F7F9F;font-size:12px;text-align:center;padding:10px}
-.player.waiting{aspect-ratio:auto;height:auto}.player.waiting .wait{position:static;padding:22px 16px}.player.waiting iframe{display:none}
+
+/* ===== Animated pre-Live stage ===== */
+.stage{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:22px 16px;overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 0%,#1B2C54 0%,#0E1830 60%,#0A1226 100%);transition:opacity .8s ease,visibility .8s}
+.stage.gone{opacity:0;visibility:hidden;pointer-events:none}
+.player.pre{aspect-ratio:auto;height:auto;min-height:440px}
+.player.pre .stage{position:relative;min-height:440px}
+.orb{position:absolute;border-radius:50%;filter:blur(40px);opacity:.45;pointer-events:none}
+.o1{width:260px;height:260px;background:var(--orange);top:-80px;left:-60px;animation:drift1 14s ease-in-out infinite alternate}
+.o2{width:300px;height:300px;background:var(--blue);bottom:-110px;right:-80px;animation:drift2 17s ease-in-out infinite alternate}
+.o3{width:160px;height:160px;background:#F2A365;top:40%;left:62%;opacity:.25;animation:drift1 11s ease-in-out infinite alternate-reverse}
+@keyframes drift1{to{transform:translate(70px,50px) scale(1.15)}}
+@keyframes drift2{to{transform:translate(-60px,-40px) scale(1.1)}}
+.grid{position:absolute;inset:0;pointer-events:none;opacity:.12;
+  background-image:linear-gradient(rgba(255,255,255,.35) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.35) 1px,transparent 1px);background-size:34px 34px;
+  -webkit-mask-image:radial-gradient(70% 60% at 50% 45%,#000 30%,transparent 80%);mask-image:radial-gradient(70% 60% at 50% 45%,#000 30%,transparent 80%);
+  animation:gridmove 20s linear infinite}
+@keyframes gridmove{to{background-position:0 34px,34px 0}}
+.sc{position:relative;z-index:1;width:100%;max-width:640px}
+.badge{position:relative;display:inline-flex;align-items:center;gap:10px;background:rgba(232,116,42,.15);border:1.5px solid rgba(232,116,42,.6);color:#FFD9BF;font-weight:700;font-size:13px;letter-spacing:1.5px;padding:7px 14px 7px 12px;border-radius:30px}
+.radar{position:relative;width:12px;height:12px}
+.radar i{position:absolute;inset:0;border-radius:50%;background:var(--orange)}
+.radar i+i,.radar i+i+i{background:transparent;border:2px solid var(--orange);animation:ring 2s ease-out infinite}
+.radar i+i+i{animation-delay:1s}
+@keyframes ring{from{transform:scale(1);opacity:.9}to{transform:scale(3.4);opacity:0}}
+.sh1{font-size:clamp(22px,4.6vw,34px);line-height:1.25;margin:14px 0 4px;font-weight:800;
+  background:linear-gradient(90deg,#fff 0%,#FFD9BF 35%,#fff 50%,#FFD9BF 65%,#fff 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite}
+@keyframes shine{to{background-position:-200% center}}
+.sh2{color:var(--muted);font-size:15px;margin:0 0 16px}
+.sh2 b{color:#fff}
+.cdw{display:flex;justify-content:center;gap:10px;margin:4px 0 6px}
+.u{display:flex;flex-direction:column;align-items:center;gap:6px}
+.u[hidden]{display:none}
+.fl{position:relative;width:clamp(58px,14vw,82px);height:clamp(66px,16vw,92px);perspective:400px}
+.fl span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:12px;
+  background:linear-gradient(180deg,#22345F 0%,#22345F 49.5%,#1A2A4E 50.5%,#1A2A4E 100%);
+  box-shadow:0 8px 20px rgba(0,0,0,.35),inset 0 0 0 1px rgba(255,255,255,.08);
+  font-size:clamp(32px,8vw,48px);font-weight:800;color:#fff;font-variant-numeric:tabular-nums;backface-visibility:hidden}
+.fl span.new{animation:flip .55s cubic-bezier(.3,.7,.4,1)}
+@keyframes flip{from{transform:rotateX(-90deg);opacity:.2}to{transform:rotateX(0);opacity:1}}
+.fl::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:rgba(0,0,0,.45);z-index:2}
+.ul{font-size:12px;color:var(--muted);letter-spacing:.5px}
+.sep{font-size:clamp(26px,6vw,40px);font-weight:800;color:var(--amber);align-self:flex-start;margin-top:clamp(12px,3.5vw,22px);animation:p 1s steps(1) infinite}
+.tk{margin:18px auto 0;max-width:520px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:12px 14px;backdrop-filter:blur(4px)}
+.tkh{font-size:13px;color:var(--amber);font-weight:700;letter-spacing:.5px;margin:0 0 6px}
+.tkv{position:relative;height:28px;overflow:hidden}
+.tkv p{position:absolute;inset:0;margin:0;font-size:17px;font-weight:600;line-height:28px;color:#fff;opacity:0;transform:translateY(100%);transition:transform .6s ease,opacity .6s ease;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tkv p.on{opacity:1;transform:none}
+.tkv p.out{opacity:0;transform:translateY(-100%)}
+.dots{display:flex;justify-content:center;gap:6px;margin-top:8px}
+.dots i{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.25);transition:all .4s}
+.dots i.on{width:18px;background:var(--orange)}
+.bar{margin:16px auto 0;max-width:420px;height:6px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden}
+.bar[hidden]{display:none}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--orange),#F2A365);border-radius:3px;transition:width 1s linear;position:relative}
+.bar i::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);animation:sweep 1.6s linear infinite}
+@keyframes sweep{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.sn{color:var(--muted);font-size:14px;margin:10px 0 0;line-height:1.5}
+.go{margin-top:14px;display:inline-flex;align-items:center;gap:8px;border:0;cursor:pointer;font:inherit;font-weight:800;font-size:17px;color:#fff;background:var(--orange);padding:12px 22px;border-radius:40px;
+  box-shadow:0 0 0 0 rgba(232,116,42,.7);animation:pulse 2s infinite;text-decoration:none}
+.go[hidden]{display:none}
+@keyframes pulse{70%{box-shadow:0 0 0 16px rgba(232,116,42,0)}100%{box-shadow:0 0 0 0 rgba(232,116,42,0)}}
+.ribbon{position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:2;pointer-events:none;background:rgba(14,24,48,.88);border:1px solid rgba(232,116,42,.6);color:#FFD9BF;font-size:13px;font-weight:700;padding:6px 14px;border-radius:20px;white-space:nowrap;transition:opacity .6s}
+.ribbon[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){.orb,.grid,.sh1,.sep,.go,.radar i,.bar i::after{animation:none!important}.fl span.new{animation:none}}
+
+/* ===== Join card ===== */
 .jc{margin-top:14px;background:#fff;color:#14213D;border-radius:14px;padding:16px;border-top:5px solid var(--orange)}
 .jt{margin:0 0 4px;font-size:19px;font-weight:700}
 .js{margin:0 0 10px;font-size:15px;line-height:1.5;color:#3F4656}
@@ -39,7 +104,34 @@ footer{color:#6F7F9F;font-size:12px;text-align:center;padding:10px}
 <header><img src="/live/finpick-logo.png" alt="FinPick"><span class="live"><span class="dot"></span>SUNDAY LIVE</span></header>
 <main>
 <h1>तुमची Health Policy खरंच पुरेशी आहे का? · Host: निखिल गौड</h1>
-<div class="player"><div id="wait" class="wait" hidden><p class="wt">Live सुरू होईल रविवारी सकाळी 11:00 वा.</p><div id="cd" class="cd"></div><p class="ws">ही page उघडी ठेवा. 10:45 ला Live room आपोआप सुरू होईल.</p></div><iframe id="pl" title="FinPick Sunday Live" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+<div class="player pre" id="player">
+  <div class="stage" id="stage">
+    <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="grid"></div>
+    <div class="sc">
+      <span class="badge"><span class="radar"><i></i><i></i><i></i></span><span id="bt">FINPICK SUNDAY LIVE</span></span>
+      <p class="sh1" id="h">Live सुरू होण्यासाठी</p>
+      <p class="sh2" id="sub">📅 <b id="sd">रविवार</b> · सकाळी 11 ते 12 · मोफत · मराठीत</p>
+      <div class="cdw" id="cdw">
+        <div class="u" id="ud"><div class="fl"><span id="dd">0</span></div><span class="ul">दिवस</span></div>
+        <div class="u"><div class="fl"><span id="hh">00</span></div><span class="ul">तास</span></div>
+        <span class="sep">:</span>
+        <div class="u"><div class="fl"><span id="mm">00</span></div><span class="ul">मिनिटं</span></div>
+        <span class="sep">:</span>
+        <div class="u"><div class="fl"><span id="ss">00</span></div><span class="ul">सेकंद</span></div>
+      </div>
+      <div class="tk">
+        <p class="tkh">✨ आज Live मध्ये समजून घ्या</p>
+        <div class="tkv" id="tkv"></div>
+        <div class="dots" id="dots"></div>
+      </div>
+      <div class="bar" id="bar" hidden><i id="bari"></i></div>
+      <p class="sn" id="sn">ही page उघडी ठेवा. सकाळी 10:45 ला Live room इथेच आपोआप उघडेल.</p>
+      <a class="go" id="go" href="#" hidden>▶ Live room मध्ये जा</a>
+    </div>
+  </div>
+  <div class="ribbon" id="rb" hidden>⏳ निखिल सर काही क्षणांत Live वर येत आहेत…</div>
+  <iframe id="pl" title="FinPick Sunday Live" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+</div>
 <section class="jc">
 <p class="jt">🔗 तुमची Live join link</p>
 <p class="jd" id="jd">📅 रविवार · सकाळी 11 ते 12 · मोफत · मराठीत</p>
@@ -62,40 +154,88 @@ footer{color:#6F7F9F;font-size:12px;text-align:center;padding:10px}
 <footer>FinPick · शैक्षणिक सत्र</footer>
 <script>
 (function(){
-  var WID="cmx04f16o0vaqs60ylx5p5364"; // webinar.gg webinar for the current Sunday
+  // webinar.gg: one event per Sunday (weekly series). Embedding is switched on in webinar.gg up to EMBED_UNTIL;
+  // after that date the page opens the Live room in a new tab instead of embedding it.
+  var WIDS={"2026-11-29":"cmx04f16o0vaqs60ylx5p5364","2026-12-06":"cmx04u9wl0vhfs60ykuwost43","2026-12-13":"cmx04u9xj0vhjs60yomeme2l7","2026-12-20":"cmx04u9xw0vhls60y4qp1s781","2026-12-27":"cmx04u9y40vhns60y59gam2un","2027-01-03":"cmx04u9yd0vhps60ytfkkspmd","2027-01-10":"cmx04u9yl0vhrs60ytfc3zh2i","2027-01-17":"cmx04u9yu0vhts60y21vh0lax","2027-01-24":"cmx04u9z20vhvs60ykrwx6sho","2027-01-31":"cmx04u9za0vhxs60yu0px3w4b","2027-02-07":"cmx04u9zk0vhzs60y4jkkdwg5","2027-02-14":"cmx04u9zs0vi1s60yb4omcsd2","2027-02-21":"cmx04ua000vi3s60y4o952onh","2027-02-28":"cmx04ua070vi5s60ynq79r7k2","2027-03-07":"cmx04ua0e0vi7s60ygp6bia96","2027-03-14":"cmx04ua0l0vi9s60ydlccm5ke","2027-03-21":"cmx04ua0s0vibs60y4t1bzj5n","2027-03-28":"cmx04ua0z0vids60y1hjwp8p7","2027-04-04":"cmx04ua160vifs60yrr7mxyk5","2027-04-11":"cmx04ua1d0vihs60y4b53tl54","2027-04-18":"cmx04ua1l0vijs60yi1v7p2go","2027-04-25":"cmx04ua1t0vils60y9bbsaf0o","2027-05-02":"cmx04ua210vins60ydrcb81e3","2027-05-09":"cmx04ua290vips60yx2i1c1tw","2027-05-16":"cmx04ua2i0virs60yjz91gy7z","2027-05-23":"cmx04ua2q0vits60y1qp77uda","2027-05-30":"cmx04ua2y0vivs60ycx6odzxd","2027-06-06":"cmx04ua350vixs60ym93zf2nt","2027-06-13":"cmx04ua3d0vizs60yj2rzglij","2027-06-20":"cmx04ua3m0vj1s60yxsn30bga","2027-06-27":"cmx04ua3t0vj3s60yd9ula8bq","2027-07-04":"cmx04ua410vj5s60y1r5z9hl6","2027-07-11":"cmx04ua490vj7s60ys3lumrku","2027-07-18":"cmx04ua4k0vj9s60yljbw8fdd","2027-07-25":"cmx04ua4t0vjbs60yd6bhbjs3","2027-08-01":"cmx04ua510vjds60yhzgteoe5","2027-08-08":"cmx04ua590vjfs60yxuq5ouan","2027-08-15":"cmx04ua5h0vjhs60y8ybofrkn","2027-08-22":"cmx04ua5o0vjjs60yl8hsuwox","2027-08-29":"cmx04ua5v0vjls60yy92y0l7j","2027-09-05":"cmx04ua630vjns60y26j27wk1","2027-09-12":"cmx04ua6b0vjps60yd8f82xrl","2027-09-19":"cmx04ua6k0vjrs60ynmhkzied","2027-09-26":"cmx04ua6s0vjts60y3e54a009","2027-10-03":"cmx04ua6z0vjvs60yvmrhf2zd","2027-10-10":"cmx04ua780vjxs60y0alhfsd1","2027-10-17":"cmx04ua7f0vjzs60y3v8oonlp","2027-10-24":"cmx04ua7n0vk1s60y4id3t5mg","2027-10-31":"cmx04ua7v0vk3s60y34t1a97e","2027-11-07":"cmx04ua830vk5s60yhigs8vg0","2027-11-14":"cmx04ua8b0vk7s60ylfj7uozu","2027-11-21":"cmx04ua8j0vk9s60y26ateek7","2027-11-28":"cmx04ua8u0vkbs60ygimv7t0c"};
+  var EMBED_UNTIL="2027-04-25";
   var D=document, $=function(i){return D.getElementById(i)};
-  $("alt").href="https://webinar.gg/webinar-page/"+WID;
+  function ist(){var n=new Date();return new Date(n.getTime()+n.getTimezoneOffset()*60000+330*60000)}
+  function pad(n){return String(n).padStart(2,"0")}
+  function ymdOf(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+  // The Sunday this page is about: today if Sunday before 12:30, otherwise the coming Sunday
+  var now=ist(), sun=new Date(now); var add=(7-now.getDay())%7;
+  if(add===0&&now.getHours()*60+now.getMinutes()>=12*60+30)add=7; sun.setDate(now.getDate()+add);
+  var KEY=ymdOf(sun), keys=Object.keys(WIDS).sort(), WID=WIDS[KEY];
+  if(!WID){WID=WIDS[keys[keys.length-1]];}
+  var EMBED=KEY<=EMBED_UNTIL;
+  var ROOM="https://webinar.gg/webinar-page/"+WID;
+  $("alt").href=ROOM;
   $("wa").href="https://wa.me/918265083354?text="+encodeURIComponent("Sunday Live प्रश्न: ");
   var q=new URLSearchParams(location.search), id=q.get("l");
   if(!id){try{id=localStorage.getItem("fp_lead")}catch(e){}}
-  if(id && /^\d{10,25}$/.test(id)){try{localStorage.setItem("fp_lead",id)}catch(e){}}
-  // Join-link card: personal link (counts attendance), copy, share (registration link for friends), calendar
+  var okId=id && /^\d{10,25}$/.test(id);
+  if(okId){try{localStorage.setItem("fp_lead",id)}catch(e){}}
+  // Join-link card
   var MONTHS=["जानेवारी","फेब्रुवारी","मार्च","एप्रिल","मे","जून","जुलै","ऑगस्ट","सप्टेंबर","ऑक्टोबर","नोव्हेंबर","डिसेंबर"];
-  var JOIN="https://insure.finpick.in/live/"+(id && /^\d{10,25}$/.test(id)?"?l="+id:"");
+  var JOIN="https://insure.finpick.in/live/"+(okId?"?l="+id:"");
   $("lk").value=JOIN;
-  (function(){var t=ist(),d=new Date(t);var add=(7-t.getDay())%7;if(add===0&&t.getHours()*60+t.getMinutes()>=12*60+30)add=7;d.setDate(t.getDate()+add);
-    $("jd").textContent="📅 रविवार, "+d.getDate()+" "+MONTHS[d.getMonth()]+" · सकाळी 11 ते 12 · मोफत · मराठीत";
-    var p=function(n){return String(n).padStart(2,"0")},ymd=d.getFullYear()+p(d.getMonth()+1)+p(d.getDate());
-    $("cal").href="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent("FinPick Sunday Live (मोफत, मराठीत)")+"&dates="+ymd+"T053000Z/"+ymd+"T063000Z&details="+encodeURIComponent("Join link: "+JOIN+"\nसकाळी 10:45 नंतर link उघडा.")+"&location="+encodeURIComponent(JOIN);})();
+  var dateTxt="रविवार, "+sun.getDate()+" "+MONTHS[sun.getMonth()];
+  $("jd").textContent="📅 "+dateTxt+" · सकाळी 11 ते 12 · मोफत · मराठीत";
+  $("sd").textContent=dateTxt;
+  var ymd=KEY.replace(/-/g,"");
+  $("cal").href="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent("FinPick Sunday Live (मोफत, मराठीत)")+"&dates="+ymd+"T053000Z/"+ymd+"T063000Z&details="+encodeURIComponent("Join link: "+JOIN+"\nसकाळी 10:45 नंतर link उघडा.")+"&location="+encodeURIComponent(JOIN);
   function done(m){$("ok").textContent=m;setTimeout(function(){$("ok").textContent=""},3000)}
   $("cp").onclick=function(){var i=$("lk");i.select();i.setSelectionRange(0,999);
     if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(JOIN).then(function(){done("✅ Link copy झाली")},function(){try{D.execCommand("copy");done("✅ Link copy झाली")}catch(e){}})}else{try{D.execCommand("copy");done("✅ Link copy झाली")}catch(e){}}};
   var REG="https://insure.finpick.in/webinar/?utm_source=share&utm_medium=friend&utm_campaign=live_share";
   var MSG="नमस्कार! रविवारी सकाळी 11 वा. FinPick Sunday Live आहे: \"तुमची Health Policy खरंच पुरेशी आहे का?\"\nमोफत · मराठीत · 1 तास · Host: निखिल गौड\nतुम्हीही जरूर join करा, इथे नाव नोंदवा 👇\n"+REG;
   $("sh").onclick=function(){if(navigator.share){navigator.share({title:"FinPick Sunday Live",text:MSG}).catch(function(){})}else{window.open("https://wa.me/?text="+encodeURIComponent(MSG),"_blank")}};
-  // Gate: room opens Sunday 10:45-12:30 IST
-  function ist(){var n=new Date();return new Date(n.getTime()+n.getTimezoneOffset()*60000+330*60000)}
-  function openNow(){var t=ist(),m=t.getHours()*60+t.getMinutes();return t.getDay()===0&&m>=10*60+45&&m<12*60+30}
-  function nextStart(){var t=ist(),d=new Date(t);d.setDate(t.getDate()+((7-t.getDay())%7));d.setHours(10,45,0,0);if(d<=t)d.setDate(d.getDate()+7);return d}
-  var opened=false;
-  function open(){if(opened)return;opened=true;$("wait").hidden=true;$("wait").parentNode.classList.remove("waiting");$("pl").src="https://webinar.gg/embed/"+WID;
-    if(id && /^\d{10,25}$/.test(id)){try{fetch("https://project-rainfall-60087439549.development.catalystserverless.in/server/lp_lead/?att="+id,{method:"POST",headers:{"Content-Type":"text/plain"},body:"{}",keepalive:true}).catch(function(){})}catch(e){}}}
-  if(q.get("test")==="1"||openNow()){open();return}
-  $("wait").hidden=false;$("wait").parentNode.classList.add("waiting");var target=nextStart();
-  function tick(){var s=Math.max(0,Math.floor((target-ist())/1000));if(s===0||openNow()){open();return}
+
+  // Rotating topics ticker
+  var TOPICS=["Room rent limit चा claim वर होणारा परिणाम","Waiting period म्हणजे नेमकं काय?","Co-pay आणि sub-limits कसे ओळखायचे","Family floater पुरेसा आहे का?","Claim reject होण्याची सामान्य कारणं","Top-up / Super top-up कधी उपयोगी पडतो","तुमचे प्रश्न, Live उत्तरं"];
+  var tkv=$("tkv"),dots=$("dots"),ti=0,tps=[];
+  TOPICS.forEach(function(t,i){var p=D.createElement("p");p.textContent=t;tkv.appendChild(p);tps.push(p);var d=D.createElement("i");dots.appendChild(d)});
+  function showTopic(n){tps.forEach(function(p,i){p.className=i===n?"on":(i===ti&&i!==n?"out":"")});[].forEach.call(dots.children,function(d,i){d.className=i===n?"on":""});ti=n}
+  showTopic(0);setInterval(function(){showTopic((ti+1)%TOPICS.length)},3200);
+
+  // Flip countdown
+  var last={};
+  function setD(el,v){if(last[el]===v)return;last[el]=v;var s=$(el);s.textContent=v;s.classList.remove("new");void s.offsetWidth;s.classList.add("new")}
+
+  // Timeline (IST): room opens 10:45, Live starts 11:00, room closes 12:30
+  function mins(t){return t.getHours()*60+t.getMinutes()}
+  function isSun(t){return t.getDay()===0}
+  function roomOpen(t){var m=mins(t);return isSun(t)&&m>=10*60+45&&m<12*60+30}
+  function at(h,m){var d=new Date(sun);d.setHours(h,m,0,0);return d}
+  var T_OPEN=at(10,45),T_START=at(11,0);
+  var TEST=q.get("test")==="1";
+  var loaded=false,stageGone=false;
+  function loadRoom(){if(loaded)return;loaded=true;
+    if(EMBED){$("pl").src="https://webinar.gg/embed/"+WID}
+    if(okId){try{fetch("https://project-rainfall-60087439549.development.catalystserverless.in/server/lp_lead/?att="+id,{method:"POST",headers:{"Content-Type":"text/plain"},body:"{}",keepalive:true}).catch(function(){})}catch(e){}}}
+  function hideStage(){if(stageGone)return;
+    if(!EMBED){window.open(ROOM,"_blank");return}
+    stageGone=true;$("player").classList.remove("pre");$("stage").classList.add("gone");
+    var t=ist();if(t<at(11,10)){$("rb").hidden=false;setTimeout(function(){$("rb").style.opacity="0";setTimeout(function(){$("rb").hidden=true},700)},Math.max(15000,at(11,8)-t))}}
+  $("go").onclick=function(e){e.preventDefault();loadRoom();hideStage()};
+  if(!EMBED){$("go").href=ROOM;$("go").target="_blank"}
+
+  function tick(){var t=ist();
+    if(TEST||(roomOpen(t)&&t>=T_START)){loadRoom();hideStage();return true}
+    var target, open=roomOpen(t);
+    if(open){ // 10:45-11:00: room is open, stage stays as a pre-show
+      loadRoom();target=T_START;
+      $("bt").textContent="LIVE ROOM उघडली आहे";$("h").textContent="Live सुरू होत आहे";
+      $("sn").textContent="तुम्ही योग्य ठिकाणी आहात. सकाळी 11:00 वा. Live आपोआप सुरू होईल.";
+      $("go").hidden=false;$("bar").hidden=false;
+      $("bari").style.width=Math.min(100,Math.max(2,(t-T_OPEN)/(T_START-T_OPEN)*100))+"%";
+    }else{target=T_START;}
+    var s=Math.max(0,Math.floor((target-t)/1000));
     var d=Math.floor(s/86400),h=Math.floor(s%86400/3600),mi=Math.floor(s%3600/60),se=s%60;
-    $("cd").textContent=(d?d+" दिवस ":"")+String(h).padStart(2,"0")+":"+String(mi).padStart(2,"0")+":"+String(se).padStart(2,"0")}
-  tick();var iv=setInterval(function(){tick();if(opened)clearInterval(iv)},1000);
+    $("ud").hidden=d===0; if(d)setD("dd",String(d));
+    setD("hh",pad(h));setD("mm",pad(mi));setD("ss",pad(se));
+    return false}
+  if(!tick()){var iv=setInterval(function(){if(tick())clearInterval(iv)},1000)}
 })();
 </script>
 </body></html>

@@ -163,11 +163,15 @@ footer{color:#6F7F9F;font-size:12px;text-align:center;padding:10px}
   function pad(n){return String(n).padStart(2,"0")}
   function ymdOf(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
   // The Sunday this page is about: today if Sunday before 12:30, otherwise the coming Sunday
-  var now=ist(), sun=new Date(now); var add=(7-now.getDay())%7;
-  if(add===0&&now.getHours()*60+now.getMinutes()>=12*60+30)add=7; sun.setDate(now.getDate()+add);
-  var KEY=ymdOf(sun), keys=Object.keys(WIDS).sort(), WID=WIDS[KEY];
+  var Q0=new URLSearchParams(location.search);
+  // Rehearsal: ?w=<webinar id>&rh=HH:MM runs the same flow today at that time (room opens 15 min before)
+  var RH=/^\d{1,2}:\d{2}$/.test(Q0.get("rh")||"")&&/^[a-z0-9]{20,30}$/.test(Q0.get("w")||"")?Q0.get("rh").split(":").map(Number):null;
+  var SH=RH?RH[0]:11, SM=RH?RH[1]:0, START=SH*60+SM;
+  var now=ist(), sun=new Date(now); var add=RH?0:(7-now.getDay())%7;
+  if(!RH&&add===0&&now.getHours()*60+now.getMinutes()>=12*60+30)add=7; sun.setDate(now.getDate()+add);
+  var KEY=ymdOf(sun), keys=Object.keys(WIDS).sort(), WID=RH?Q0.get("w"):WIDS[KEY];
   if(!WID){WID=WIDS[keys[keys.length-1]];}
-  var EMBED=KEY<=EMBED_UNTIL;
+  var EMBED=RH?true:KEY<=EMBED_UNTIL;
   var ROOM="https://webinar.gg/webinar-page/"+WID;
   $("alt").href=ROOM;
   $("wa").href="https://wa.me/918265083354?text="+encodeURIComponent("Sunday Live प्रश्न: ");
@@ -182,6 +186,7 @@ footer{color:#6F7F9F;font-size:12px;text-align:center;padding:10px}
   var dateTxt="रविवार, "+sun.getDate()+" "+MONTHS[sun.getMonth()];
   $("jd").textContent="📅 "+dateTxt+" · सकाळी 11 ते 12 · मोफत · मराठीत";
   $("sd").textContent=dateTxt;
+  if(RH){$("sn").textContent="Rehearsal: Live room "+(SH-12)+":"+String(SM-15<0?SM+45:SM-15).padStart(2,"0")+" ला इथे आपोआप उघडेल.";var hh=SH>12?SH-12:SH;$("sd").textContent="REHEARSAL · आज";$("sub").lastChild.textContent=" · "+hh+":"+String(SM).padStart(2,"0")+" वा. · Test";}
   var ymd=KEY.replace(/-/g,"");
   $("cal").href="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent("FinPick Sunday Live (मोफत, मराठीत)")+"&dates="+ymd+"T053000Z/"+ymd+"T063000Z&details="+encodeURIComponent("Join link: "+JOIN+"\nसकाळी 10:45 नंतर link उघडा.")+"&location="+encodeURIComponent(JOIN);
   function done(m){$("ok").textContent=m;setTimeout(function(){$("ok").textContent=""},3000)}
@@ -204,19 +209,19 @@ footer{color:#6F7F9F;font-size:12px;text-align:center;padding:10px}
 
   // Timeline (IST): room opens 10:45, Live starts 11:00, room closes 12:30
   function mins(t){return t.getHours()*60+t.getMinutes()}
-  function isSun(t){return t.getDay()===0}
-  function roomOpen(t){var m=mins(t);return isSun(t)&&m>=10*60+45&&m<12*60+30}
+  function isSun(t){return RH?ymdOf(t)===KEY:t.getDay()===0}
+  function roomOpen(t){var m=mins(t);return isSun(t)&&m>=START-15&&m<START+90}
   function at(h,m){var d=new Date(sun);d.setHours(h,m,0,0);return d}
-  var T_OPEN=at(10,45),T_START=at(11,0);
+  var T_OPEN=at(SH,SM-15),T_START=at(SH,SM);
   var TEST=q.get("test")==="1";
   var loaded=false,stageGone=false;
   function loadRoom(){if(loaded)return;loaded=true;
     if(EMBED){$("pl").src="https://webinar.gg/embed/"+WID}
-    if(okId){try{fetch("https://project-rainfall-60087439549.development.catalystserverless.in/server/lp_lead/?att="+id,{method:"POST",headers:{"Content-Type":"text/plain"},body:"{}",keepalive:true}).catch(function(){})}catch(e){}}}
+    if(okId&&!RH){try{fetch("https://project-rainfall-60087439549.development.catalystserverless.in/server/lp_lead/?att="+id,{method:"POST",headers:{"Content-Type":"text/plain"},body:"{}",keepalive:true}).catch(function(){})}catch(e){}}}
   function hideStage(){if(stageGone)return;
     if(!EMBED){window.open(ROOM,"_blank");return}
     stageGone=true;$("player").classList.remove("pre");$("stage").classList.add("gone");
-    var t=ist();if(t<at(11,10)){$("rb").hidden=false;setTimeout(function(){$("rb").style.opacity="0";setTimeout(function(){$("rb").hidden=true},700)},Math.max(15000,at(11,8)-t))}}
+    var t=ist();if(t<at(SH,SM+10)){$("rb").hidden=false;setTimeout(function(){$("rb").style.opacity="0";setTimeout(function(){$("rb").hidden=true},700)},Math.max(15000,at(SH,SM+8)-t))}}
   $("go").onclick=function(e){e.preventDefault();loadRoom();hideStage()};
   if(!EMBED){$("go").href=ROOM;$("go").target="_blank"}
 
@@ -226,7 +231,7 @@ footer{color:#6F7F9F;font-size:12px;text-align:center;padding:10px}
     if(open){ // 10:45-11:00: room is open, stage stays as a pre-show
       loadRoom();target=T_START;
       $("bt").textContent="LIVE ROOM उघडली आहे";$("h").textContent="Live सुरू होत आहे";
-      $("sn").textContent="तुम्ही योग्य ठिकाणी आहात. सकाळी 11:00 वा. Live आपोआप सुरू होईल.";
+      $("sn").textContent="तुम्ही योग्य ठिकाणी आहात. "+(RH?SH-12+":"+String(SM).padStart(2,"0")+" वा.":"सकाळी 11:00 वा.")+" Live आपोआप सुरू होईल.";
       $("go").hidden=false;$("bar").hidden=false;
       $("bari").style.width=Math.min(100,Math.max(2,(t-T_OPEN)/(T_START-T_OPEN)*100))+"%";
     }else{target=T_START;}
